@@ -1,6 +1,6 @@
 from Grid import *
 import PolicyIterator as pi
-from scipy.ndimage.filters import maximum_filter
+from ConvergenceCriterion import *
 
 def evaluate_policy(policyEvaluationGrid):
     policyGrid = PolicyGrid(policyEvaluationGrid.shape)
@@ -12,7 +12,26 @@ def evaluate_policy(policyEvaluationGrid):
 
     return policyGrid
 
-def improve_policy(fieldGrid, policyGrid, policyEvaluationGrid, step_cost):
+def policy_optimizer(fieldGrid, discount, step_cost, evaluation_convergence_criterion, improvement_convergence_criterion = None):
+        shape = fieldGrid.shape
+        if improvement_convergence_criterion is None:
+            improvement_convergence_criterion = ConvergenceCriterionImprovementEpsilon(epsilon_change=0)
+        old_policy_grid = PolicyGrid(shape)
+
+
+        while True:
+            evaluation_convergence_criterion.reset()
+            policyIterationGrid = pi.performPolicyIteration(fieldGrid=fieldGrid, policyGrid=old_policy_grid, discount=discount, step_cost=step_cost, convergence_criterion=evaluation_convergence_criterion)
+            new_policy_grid = improve_policy_step(fieldGrid= fieldGrid, policyGrid=old_policy_grid, policyEvaluationGrid=policyIterationGrid, step_cost=step_cost)
+
+            improvement_convergence_criterion.increase()
+            if improvement_convergence_criterion.is_converged(old_policy_grid, new_policy_grid):
+                break
+        optimal_policy = new_policy_grid
+        print(f"Got a policy which we hope is optimal after {improvement_convergence_criterion.iterations} steps")
+        return optimal_policy
+
+def improve_policy_step(fieldGrid, policyGrid, policyEvaluationGrid, step_cost):
     """Improving a policy by replacing every action of the policy by a greedy action"""
     shape = fieldGrid.shape
     direction_policy_grids = []
