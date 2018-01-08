@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+# author: rimichael
+# last_changed: 08-01-18
+import argparse
+
+parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
+parse and print grid file accordingly.''')
+parser.add_argument('gridfile', help='path to input .grid file')
+args=parser.parse_args()
+
+def read_grid(path_to_grid):
+    '''gets grid from input and returns grid_world to output'''
+    grid = {}
+    with open(path_to_grid, 'r') as grid_file:
+        grid = {'line_{}'.format(number) for number in range(len(grid_file))}
+    return grid
+
+def print_grid(grid):
+    '''prints grid from grid_array'''
+    for line in sorted(grid_array):
+        print(line)
+
+def main():
+    read_grid(gridfile)
+    print_grid()
+        
+if __name__ == __main__:
+    main()
