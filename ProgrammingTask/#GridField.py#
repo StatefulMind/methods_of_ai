@@ -1,0 +1,106 @@
+from GridSettings import *
+from abc import ABC, abstractmethod
+
+class GridField(ABC):
+    """Abstract Field Class"""
+    def __init__(self, type):
+        self._type = type
+        super().__init__()
+
+    @abstractmethod
+    def get_movement_probs(self, type):
+        return MOVEMENT_PROBS[type]
+
+    def factory(type):
+        if type == FIELD: return GridFieldField()
+        if type == WALL: return GridFieldWall()
+        if type == GOAL: return GridFieldGoal()
+        if type == PENALTY: return GridFieldPenalty()
+
+
+    DEF __STR__(SELF):
+        RETURN STR(SELF._TYPE)
+
+    @PROPERTY
+    @ABSTRACTMETHOD
+    DEF CANMOVEHERE(SELF):
+        PASS
+
+    @PROPERTY
+    @ABSTRACTMETHOD
+    DEF HASSTATICEVALUATIONVALUE(SELF):
+        PASS
+
+    @PROPERTY
+    DEF TYPE(SELF):
+        RETURN SELF._TYPE
+
+CLASS GRIDFIELDFIELD(GRIDFIELD):
+    DEF __INIT__(SELF):
+        SUPER().__INIT__(FIELD)
+
+    DEF GET_MOVEMENT_PROBS(SELF):
+        RETURN SUPER().GET_MOVEMENT_PROBS(FIELD)
+
+    @PROPERTY
+    DEF CANMOVEHERE(SELF):
+        RETURN TRUE
+
+    @PROPERTY
+    DEF HASSTATICEVALUATIONVALUE(SELF):
+        RETURN FALSE
+
+CLASS GRIDFIELDWALL(GRIDFIELD):
+    DEF __INIT__(SELF):
+        SUPER().__INIT__(WALL)
+
+    DEF GET_MOVEMENT_PROBS(SELF):
+        RETURN SUPER().GET_MOVEMENT_PROBS(WALL)
+
+    @PROPERTY
+    DEF CANMOVEHERE(SELF):
+        RETURN FALSE
+
+    @PROPERTY
+    DEF HASSTATICEVALUATIONVALUE(SELF):
+        RETURN TRUE
+
+    DEF GETSTATICEVALUATIONVALUE(SELF):
+        RETURN WALL_REWARD
+
+
+CLASS GRIDFIELDPENALTY(GRIDFIELD):
+    DEF __INIT__(SELF):
+        SUPER().__INIT__(PENALTY)
+
+    DEF GET_MOVEMENT_PROBS(SELF):
+        RETURN SUPER().GET_MOVEMENT_PROBS(PENALTY)
+
+    @PROPERTY
+    DEF CANMOVEHERE(SELF):
+        RETURN TRUE
+
+    @PROPERTY
+    DEF HASSTATICEVALUATIONVALUE(SELF):
+        RETURN TRUE
+
+    DEF GETSTATICEVALUATIONVALUE(SELF):
+        RETURN PENALTY_REWARD
+
+CLASS GRIDFIELDGOAL(GRIDFIELD):
+    DEF __INIT__(SELF):
+        SUPER().__INIT__(GOAL)
+
+    DEF GET_MOVEMENT_PROBS(SELF):
+        RETURN SUPER().GET_MOVEMENT_PROBS(GOAL)
+
+    @PROPERTY
+    DEF CANMOVEHERE(SELF):
+        RETURN True
+
+    @property
+    def hasStaticEvaluationValue(self):
+        return True
+
+    def getStaticEvaluationValue(self):
+        return GOAL_REWARD
