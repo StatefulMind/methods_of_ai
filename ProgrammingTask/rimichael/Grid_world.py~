@@ -8,6 +8,9 @@ parse and print grid file accordingly.''')
 parser.add_argument('gridfile', help='path to input .grid file')
 args=parser.parse_args()
 
+class Grid_world(self, path_to_grid):
+
+
 def read_grid(path_to_grid):
     '''gets grid from input and returns grid_world to output'''
     grid_dict = {}
