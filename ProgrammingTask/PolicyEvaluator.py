@@ -14,8 +14,10 @@ def evaluate_policy(policyEvaluationGrid):
 
 def policy_optimizer(fieldGrid, discount, step_cost, evaluation_convergence_criterion, improvement_convergence_criterion = None):
         shape = fieldGrid.shape
+
         if improvement_convergence_criterion is None:
             improvement_convergence_criterion = ConvergenceCriterionImprovementEpsilon(epsilon_change=0)
+
         old_policy_grid = PolicyGrid(shape)
 
 

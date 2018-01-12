@@ -5,24 +5,24 @@ import numpy as np
 
 def policyIterationStep(fieldGrid, policyGrid, oldPolicyEvaluationGrid, discount, step_cost):
     shape = policyGrid.shape
-    newPolicyEvaluationGrid = PolicyEvaluationGrid(shape)
+    new_policy_evaluation_grid = PolicyEvaluationGrid(shape)
 
     for x, y in iter2d(shape):
         oldEvaluationValue = oldPolicyEvaluationGrid.get_field(x, y)
         evaluationValueDelta = 0
         field = fieldGrid.get_field(x, y)
         if field.hasStaticEvaluationValue:
-            newPolicyEvaluationGrid.set_field(x, y, field.getStaticEvaluationValue())
+            new_policy_evaluation_grid.set_field(x, y, field.getStaticEvaluationValue())
             continue
-        policyDirection = policyGrid.get_field(x, y)
-        movementProbs = field.get_movement_probs()[policyDirection]
+        policy_direction = policyGrid.get_field(x, y)
+        movementProbs = field.get_movement_probs()[policy_direction]
 
         successorStateSum = 0
         immediateReward = -step_cost
         for movementDirection in DIRECTIONS:
             (x_mv, y_mv) = np.add((x, y), DIRECTIONS_D[movementDirection])
-            #Do not evaluate the field again, even if you do not move:
             if (x_mv, y_mv) == (x, y):
+                successorStateSum += movementProbs[movementDirection] * oldPolicyEvaluationGrid.get_field(x, y)
                 continue
             if isOutOfBoundaries(x_mv, y_mv, shape):
                 successorStateSum += 0
@@ -33,8 +33,8 @@ def policyIterationStep(fieldGrid, policyGrid, oldPolicyEvaluationGrid, discount
                 continue
             successorStateSum += movementProbs[movementDirection] * oldPolicyEvaluationGrid.get_field(x_mv, y_mv)
         newEvaluationValue = immediateReward + discount * successorStateSum
-        newPolicyEvaluationGrid.set_field(x, y, newEvaluationValue)
-    return newPolicyEvaluationGrid
+        new_policy_evaluation_grid.set_field(x, y, newEvaluationValue)
+    return new_policy_evaluation_grid
 
 def performPolicyIteration(fieldGrid, policyGrid, discount, step_cost, convergence_criterion):
     shape = policyGrid.shape
@@ -50,5 +50,5 @@ def performPolicyIteration(fieldGrid, policyGrid, discount, step_cost, convergen
             break
         oldPolicyEvaluationGrid = newPolicyEvaluationGrid
         iteration += 1
-    print(f'Policy Iteration converged after {iteration} iterations')
+    # print(f'Policy Iteration converged after {iteration} iterations')
     return newPolicyEvaluationGrid

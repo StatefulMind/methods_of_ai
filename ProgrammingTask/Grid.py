@@ -116,3 +116,14 @@ class PolicyGrid(Grid):
     def set_random_policy(self):
         self.set_policy(np.random.choice([dir for dir in DIRECTIONS if not dir == NOMOVE], self._grid.shape))
         #self.set_policy(np.random.choice([dir for dir in DIRECTIONS], self._grid.shape))
+
+    def print(self):
+        field_string = ""
+        line_old = 0
+        for line, row in itertools.product(range(self.shape[0]), range(self.shape[1])):
+            if not line_old == line:
+                field_string += "\n"
+                line_old = line
+            field_string += DIRECTION_SYMBOLS[self.get_field(line, row)]
+            field_string += " "
+        print(field_string)
