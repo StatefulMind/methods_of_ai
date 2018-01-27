@@ -46,7 +46,7 @@ class GridFieldField(GridField):
                    'FIELD_PROB_DOWN': {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1},
                    'FIELD_PROB_LEFT': {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
 
-    def __init__(self, FIELD, FIELD_PROBS):
+    def __init__(self, FIELD=FIELD, FIELD_PROBS=FIELD_PROBS):
         super().__init__(FIELD)
         self._FIELD_PROBS = FIELD_PROBS
 
@@ -71,7 +71,7 @@ class GridFieldWall(GridField):
     WALL_PROBS = {NOMOVE: WALL_PROB_ANY, UP: WALL_PROB_ANY, RIGHT: WALL_PROB_ANY, DOWN: WALL_PROB_ANY,
                   LEFT: WALL_PROB_ANY}
 
-    def __init__(self, WALL, WALL_PROB_ANY, WALL_PROBS):
+    def __init__(self, WALL=WALL, WALL_PROB_ANY=WALL_PROB_ANY, WALL_PROBS=WALL_PROBS):
         super().__init__(WALL)
         self._WALL_REWARD = 0
         self._WALL_PROB_ANY = WALL_PROB_ANY
@@ -102,8 +102,7 @@ class GridFieldPenalty(GridField):
     PENALTY_PROBS = {NOMOVE: PENALTY_PROB_ANY, UP: PENALTY_PROB_ANY, RIGHT: PENALTY_PROB_ANY, DOWN: PENALTY_PROB_ANY,
                      LEFT: PENALTY_PROB_ANY}
 
-
-    def __init__(self, PENALTY, PENALTY_PROBS, PENALTY_PROBS_ANY):
+    def __init__(self, PENALTY=PENALTY, PENALTY_PROBS=PENALTY_PROBS):
         super().__init__(PENALTY)
         self._PENALTY_PROBS = PENALTY_PROBS
         self._PENALTY_REWARD = -1
@@ -133,7 +132,7 @@ class GridFieldGoal(GridField):
     GOAL_PROBS = {NOMOVE: GOAL_PROB_ANY, UP: GOAL_PROB_ANY, RIGHT: GOAL_PROB_ANY, DOWN: GOAL_PROB_ANY,
                   LEFT: GOAL_PROB_ANY}
 
-    def __init__(self, GOAL, GOAL_PROBS):
+    def __init__(self, GOAL=GOAL, GOAL_PROBS=GOAL_PROBS):
         super().__init__(GOAL)
         self._GOAL_REWARD = 1
         self._GOAL_PROBS = GOAL_PROBS

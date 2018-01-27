@@ -1,5 +1,6 @@
 import itertools
 import argparse
+
 from ProgrammingTask.GridField import GridField
 
 # TODO eliminate those
@@ -31,25 +32,25 @@ class Grid:
     '''
 
     # TODO Initialize field when constructor is called from input file...
-    def __init__(self, gridfile, separator=" "):
+    def __init__(self, grid_file, separator=" "):
         '''
-        Constructor of Grid takes input file and converts it into array
-        that is used to construct the Fields from GridFields
-        :param gridfile:
+        Constructor of Grid takes input file and reads it into array
+        that is used to instantiate the Fields from GridFields
+        bound to _grid
+        :param grid_file:
         :param separator:
         '''
-        self.__init__()
         self._array = []
-        with open(gridfile) as read_file:
+        with open(grid_file) as read_file:
             for line in read_file.readlines():
                 weight_list = line.strip('\n').split(separator)
                 self._array.append(weight_list)
         # instantiate empty grid by x-coordinate times y-coordinate as nested array
         self._grid = [[None] * len(self._array[0])] * len(self._array)
-        # iterate over grid and instantiate the actual fields
-        for x, y in itertools.product(range(len(self._array[0])), range(len(self._array))):
+        # iterate over grid and instantiate the actual fields - return of array values for factory
+        for x, y in itertools.product(range(len(self._array)), range(len(self._array[0]))):
             field_type = self._array[x][y]
-            self._grid[x, y] = GridField.factory(field_type)
+            self._grid[x][y] = GridField.factory(field_type)
 
     def __str__(self):
         out = ""
@@ -156,14 +157,14 @@ class PolicyGrid(Grid):
 # instantiate parser
 parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
 parse and print grid file accordingly.''')
-parser.add_argument('gridfile', help='path to input .grid file')
-parser.add_argument('-i', '--iter', type='int',
-                    help='how many iterations are performed by the policy iteration', )
+parser.add_argument('grid_file', help='path to input .grid file')
+#parser.add_argument('-i', '--iter', type='int',
+#                   help='how many iterations are performed by the policy iteration', )
 args = parser.parse_args()
 
 
 def main():
-    grid = Grid(args.gridfile)
+    grid = Grid(grid_file=args.grid_file)
     print(grid)
 
 
