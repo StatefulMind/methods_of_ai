@@ -9,9 +9,9 @@ import random
 
 GOAL = "E"
 PENALTY = "P"
-WALL = "O"
 
-TYPES = [GOAL, PENALTY, WALL]
+
+TYPES = [GOAL, PENALTY]
 
 
 NOMOVE = 0
@@ -42,13 +42,9 @@ PENALTY_PROBS = {NOMOVE: PENALTY_PROB_ANY, UP: PENALTY_PROB_ANY, RIGHT: PENALTY_
                  LEFT: PENALTY_PROB_ANY}
 PENALTY_REWARD = -1
 
-WALL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
-WALL_PROBS = {NOMOVE: WALL_PROB_ANY, UP: WALL_PROB_ANY, RIGHT: WALL_PROB_ANY, DOWN: WALL_PROB_ANY,
-              LEFT: WALL_PROB_ANY}
-WALL_REWARD = 0
 
-MOVEMENT_PROBS = {GOAL: GOAL_PROBS, PENALTY: PENALTY_PROBS,
-                  WALL: WALL_PROBS}
+
+MOVEMENT_PROBS = {GOAL: GOAL_PROBS, PENALTY: PENALTY_PROBS}
 
 class Grid(ABC):
     '''
@@ -235,12 +231,21 @@ class GridFieldField(GridField):
     def hasStaticEvaluationValue(self):
         return False
 
+
 class GridFieldWall(GridField):
-    def __init__(self):
-        super().__init__(WALL)
+    WALL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
+    WALL_PROBS = {NOMOVE: WALL_PROB_ANY, UP: WALL_PROB_ANY, RIGHT: WALL_PROB_ANY, DOWN: WALL_PROB_ANY,
+                  LEFT: WALL_PROB_ANY}
+
+    def __init__(self, WALL_PROB_ANY, WALL_PROBS):
+        # super().__init__(WALL)
+        self.WALL = 'O'
+        self._WALL_REWARD = 0
+        self._WALL_PROB_ANY = WALL_PROB_ANY
+        self._WALL_PROBS = WALL_PROBS
 
     def get_movement_probs(self):
-        return super().get_movement_probs(WALL)
+        return self._WALL_PROB_ANY
 
     @property
     def canMoveHere(self):
@@ -251,7 +256,7 @@ class GridFieldWall(GridField):
         return True
 
     def getStaticEvaluationValue(self):
-        return WALL_REWARD
+        return self._WALL_REWARD
 
 
 class GridFieldPenalty(GridField):
