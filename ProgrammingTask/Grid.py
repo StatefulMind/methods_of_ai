@@ -1,6 +1,4 @@
 import itertools
-from GridSettings import *
-from GridField import GridField
 import numpy as np
 from abc import ABC, abstractmethod
 import argparse
@@ -11,10 +9,9 @@ import random
 
 GOAL = "E"
 PENALTY = "P"
-FIELD = "F"
 WALL = "O"
 
-TYPES = [GOAL, PENALTY, FIELD, WALL]
+TYPES = [GOAL, PENALTY, WALL]
 
 
 NOMOVE = 0
@@ -35,15 +32,6 @@ DIRECTIONS_D = {NOMOVE: NOMOVE_D, UP: UP_D, RIGHT: RIGHT_D, DOWN: DOWN_D, LEFT: 
 
 DIRECTION_SYMBOLS = {NOMOVE: "o", UP: '\u25b2', RIGHT: '>', DOWN: 'V', LEFT: '<'}
 
-FIELD_PROB_NOMOVE = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
-FIELD_PROB_UP = {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1}
-FIELD_PROB_RIGHT = {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0}
-FIELD_PROB_DOWN = {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1}
-FIELD_PROB_LEFT = {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}
-
-FIELD_PROBS = {NOMOVE: FIELD_PROB_NOMOVE, UP: FIELD_PROB_UP, RIGHT: FIELD_PROB_RIGHT, DOWN: FIELD_PROB_DOWN,
-               LEFT: FIELD_PROB_LEFT}
-
 GOAL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
 GOAL_PROBS = {NOMOVE: GOAL_PROB_ANY, UP: GOAL_PROB_ANY, RIGHT: GOAL_PROB_ANY, DOWN: GOAL_PROB_ANY,
               LEFT: GOAL_PROB_ANY}
@@ -59,12 +47,13 @@ WALL_PROBS = {NOMOVE: WALL_PROB_ANY, UP: WALL_PROB_ANY, RIGHT: WALL_PROB_ANY, DO
               LEFT: WALL_PROB_ANY}
 WALL_REWARD = 0
 
-MOVEMENT_PROBS = {FIELD: FIELD_PROBS, GOAL: GOAL_PROBS, PENALTY: PENALTY_PROBS,
+MOVEMENT_PROBS = {GOAL: GOAL_PROBS, PENALTY: PENALTY_PROBS,
                   WALL: WALL_PROBS}
 
 class Grid(ABC):
     '''
-    Abstract Grid class
+    Abstract Grid class, initializes as none,
+    has get and set methods for field and string representation
     '''
 
     def __init__(self):
@@ -97,14 +86,14 @@ class Grid(ABC):
 
 class FieldGrid(Grid):
     """
-    Contains a Field with O, E, P,...
+    Contains a Field with fields
     """
     def __init__(self, matrix):
         super().__init__()
         self._grid = np.empty(matrix.shape, dtype=GridField.__class__)
         for x, y in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
-            fieldType = matrix[x, y]
-            self._grid[x, y] = GridField.factory(fieldType)
+            field_type = matrix[x, y]
+            self._grid[x, y] = GridField.factory(field_type)
 
 
 class PolicyEvaluationGridDepr(Grid):
@@ -114,7 +103,7 @@ class PolicyEvaluationGridDepr(Grid):
     with the keys representing directions and the values representing probabilities.
     The values of every field have to sum up to 1.
     """
-    def __init__(self, shape, initial_policy_evaluation = None):
+    def __init__(self, shape, initial_policy_evaluation=None):
         super().__init__()
         if initial_policy_evaluation is None:
             self.set_policy_evaluation_random(shape)
@@ -133,9 +122,7 @@ class PolicyEvaluationGridDepr(Grid):
         policy_grid = np.empty(shape, dtype=dict)
         content = {}
         for x, y in itertools.product(range(shape[0]), range(shape[1])):
-            #content[DIRECTIONS] = np.random.dirichlet(np.ones(len(DIRECTIONS)),size=1)
-            #content = dict((DIRECTIONS, np.random.dirichlet(np.ones(len(DIRECTIONS)),size=1)))
-            for (direction, value) in zip(DIRECTIONS, np.random.dirichlet(np.ones(len(DIRECTIONS)),size=1)[0]):
+            for (direction, value) in zip(DIRECTIONS, np.random.dirichlet(np.ones(len(DIRECTIONS)), size=1)[0]):
                 content[direction] = value
             policy_grid[x, y] = content
         self.set_policy_evaluation(policy_grid)
@@ -190,6 +177,7 @@ class PolicyGrid(Grid):
             field_string += " "
         print(field_string)
 
+# ToDo REDUCE COMPLEXITY ELIMINATE GLOBAL VARIABLES, eliminate ABC for Field
 class GridField(ABC):
     """Abstract Field Class"""
     def __init__(self, type):
@@ -200,8 +188,9 @@ class GridField(ABC):
     def get_movement_probs(self, type):
         return MOVEMENT_PROBS[type]
 
+    # ToDo REDO FACTORY FUNCTION - locate in Grid?
     def factory(type):
-        if type == FIELD: return GridFieldField()
+        #if type == FIELD: return GridFieldField()
         if type == WALL: return GridFieldWall()
         if type == GOAL: return GridFieldGoal()
         if type == PENALTY: return GridFieldPenalty()
@@ -225,11 +214,18 @@ class GridField(ABC):
         return self._type
 
 class GridFieldField(GridField):
+    FIELD = "F"
+    FIELD_PROBS = {'FIELD_PROB_NOMOVE': {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0},
+    'FIELD_PROB_UP' : {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1},
+    'FIELD_PROB_RIGHT' : {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0},
+    'FIELD_PROB_DOWN' : {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1},
+    'FIELD_PROB_LEFT' : {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
+
     def __init__(self):
         super().__init__(FIELD)
 
-    def get_movement_probs(self):
-        return super().get_movement_probs(FIELD)
+    def get_movement_probs(self, FIELD_PROBS):
+        return FIELD_PROBS
 
     @property
     def canMoveHere(self):
