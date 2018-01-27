@@ -27,15 +27,19 @@ DIRECTION_SYMBOLS = {NOMOVE: "o", UP: '\u25b2', RIGHT: '>', DOWN: 'V', LEFT: '<'
 
 
 
-class Grid():
+class Grid:
     '''
     Grid class, initializes with Grid matrix from file
     has get and set methods for field and string representation
     '''
 
-    def __init__(self):
+    # TODO Initialize field when constructor is called from input file...
+    def __init__(self, matrix):
         self.__init__()
-        self._grid = None
+        self._grid = np.empty(matrix.shape, dtype=GridField.__class__)
+        for x, y in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
+            field_type = matrix[x, y]
+            self._grid[x, y] = GridField.factory(field_type)
 
     def __str__(self):
         out = ""
@@ -58,38 +62,22 @@ class Grid():
     def shape(self):
         return self._grid.shape
 
-    def parse_to_matrix(filepath, separator=" "):
+    def parse_to_matrix(self, filepath, separator=" "):
         """
-        By: Jan
         Reads a textfile to a matrix.
         Assumptions:Every line corresponds to one line of the matrix
         Every line has the same number of items
         separator is the sign with which weights are separated
         """
-        file = open(filepath, "r")
-
         array = []
-
-        for line in file.readlines():
-            weight_list = line.strip('\n').split(separator)
+        with open(filepath) as read_file:
+            for line in read_file.readlines():
+                weight_list = line.strip('\n').split(separator)
             array.append(weight_list)
 
         return array
 
     # return np.array(array, dtype = np.unicode_)
-
-
-class FieldGrid(Grid):
-    """
-    Contains a Field with fields
-    """
-
-    def __init__(self, matrix):
-        super().__init__()
-        self._grid = np.empty(matrix.shape, dtype=GridField.__class__)
-        for x, y in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
-            field_type = matrix[x, y]
-            self._grid[x, y] = GridField.factory(field_type)
 
 
 class PolicyEvaluationGridDepr(Grid):
