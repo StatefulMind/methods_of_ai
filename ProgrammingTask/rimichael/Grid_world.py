@@ -26,12 +26,12 @@ class Grid_world():
                 grid_dict['{}_line'.format(num)] = line.strip()
                 return grid_dict
 
-    def __str__(self):
+    def __str__(self, grid_dict):
         '''prints grid from grid_array'''
         for line in sorted(grid_dict):
             print(grid_dict.get(line))
 
-    def policy_iterator(iterations = ):
+    def policy_iterator(iterations = 5):
         grid_values = 0
         yield grid_values
 
@@ -39,8 +39,7 @@ class Grid_world():
 
 def main():
     grid = Grid_world(args.gridfile)
-    grid.read_grid()
-    grid.print_grid()
+    grid.print_grid(grid.read_grid())
 
 
 if __name__ == '__main__':
