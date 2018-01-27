@@ -1,13 +1,14 @@
 import itertools
-import numpy as np
-from abc import ABC,
 import argparse
-import random
+from ProgrammingTask.GridField import GridField
 
-# Contains all Settings for the Task
-# Values for fields and definitions of directions
-
-
+# TODO eliminate those
+# Maybe we can solve this differently? global variables are bad practive in Python
+NOMOVE  = 0
+UP = 1
+RIGHT = 2
+DOWN = 3
+LEFT = 4
 
 DIRECTIONS = [NOMOVE, UP, RIGHT, DOWN, LEFT]
 
@@ -30,11 +31,24 @@ class Grid:
     '''
 
     # TODO Initialize field when constructor is called from input file...
-    def __init__(self, matrix):
+    def __init__(self, gridfile, separator=" "):
+        '''
+        Constructor of Grid takes input file and converts it into array
+        that is used to construct the Fields from GridFields
+        :param gridfile:
+        :param separator:
+        '''
         self.__init__()
-        self._grid = np.empty(matrix.shape, dtype=GridField.__class__)
-        for x, y in itertools.product(range(matrix.shape[0]), range(matrix.shape[1])):
-            field_type = matrix[x, y]
+        self._array = []
+        with open(gridfile) as read_file:
+            for line in read_file.readlines():
+                weight_list = line.strip('\n').split(separator)
+                self._array.append(weight_list)
+        # instantiate empty grid by x-coordinate times y-coordinate as nested array
+        self._grid = [[None] * len(self._array[0])] * len(self._array)
+        # iterate over grid and instantiate the actual fields
+        for x, y in itertools.product(range(len(self._array[0])), range(len(self._array))):
+            field_type = self._array[x][y]
             self._grid[x, y] = GridField.factory(field_type)
 
     def __str__(self):
@@ -46,7 +60,7 @@ class Grid:
         return out
 
     def get_field(self, x, y):
-        return self._grid[x, y]
+        return self._grid[x][y]
 
     def set_field(self, x, y, obj):
         self._grid[x, y] = obj
@@ -57,23 +71,6 @@ class Grid:
     @property
     def shape(self):
         return self._grid.shape
-
-    def parse_to_matrix(self, filepath, separator=" "):
-        """
-        Reads a textfile to a matrix.
-        Assumptions:Every line corresponds to one line of the matrix
-        Every line has the same number of items
-        separator is the sign with which weights are separated
-        """
-        array = []
-        with open(filepath) as read_file:
-            for line in read_file.readlines():
-                weight_list = line.strip('\n').split(separator)
-            array.append(weight_list)
-
-        return array
-
-    # return np.array(array, dtype = np.unicode_)
 
 
 class PolicyEvaluationGridDepr(Grid):
@@ -167,6 +164,7 @@ args = parser.parse_args()
 
 def main():
     grid = Grid(args.gridfile)
+    print(grid)
 
 
 if __name__ == '__main__':
