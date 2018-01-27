@@ -1,3 +1,12 @@
+from abc import ABC
+
+# TODO eliminate those
+NOMOVE = 0
+UP = 1
+RIGHT = 2
+DOWN = 3
+LEFT = 4
+
 class GridField(ABC):
     """Abstract Field Class for Fields in the Grid
     defines type property
@@ -111,7 +120,7 @@ class GridFieldPenalty(GridField):
     def get_static_evaluation_value(self):
         return self._PENALTY_REWARD
 
-]
+
 class GridFieldGoal(GridField):
     '''
     Class containing properties for the Goal Field

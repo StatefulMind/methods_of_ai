@@ -7,11 +7,7 @@ import random
 # Contains all Settings for the Task
 # Values for fields and definitions of directions
 
-NOMOVE = 0
-UP = 1
-RIGHT = 2
-DOWN = 3
-LEFT = 4
+
 
 DIRECTIONS = [NOMOVE, UP, RIGHT, DOWN, LEFT]
 
