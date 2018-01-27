@@ -1,5 +1,5 @@
 import itertools
-from GridConstants import *
+from GridSettings import *
 from GridField import GridField
 import numpy as np
 from abc import ABC, abstractmethod
