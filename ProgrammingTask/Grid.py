@@ -45,12 +45,8 @@ class Grid:
             for line in read_file.readlines():
                 weight_list = line.strip('\n').split(separator)
                 self._array.append(weight_list)
-        # instantiate empty grid by x-coordinate times y-coordinate as nested array
-        self._grid = [[None] * len(self._array[0])] * len(self._array)
-        # iterate over grid and instantiate the actual fields - return of array values for factory
-        for x, y in itertools.product(range(len(self._array)), range(len(self._array[0]))):
-            field_type = self._array[x][y]
-            self._grid[x][y] = GridField.factory(field_type)
+        # use grid values as input for field factory and instantiate the grid
+        self._grid = [[GridField.factory(field_type) for field_type in line] for line in self._array]
 
     def __str__(self):
         out = ""
