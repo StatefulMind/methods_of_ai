@@ -154,17 +154,19 @@ class PolicyGrid(Grid):
 
 # ToDo REDUCE COMPLEXITY ELIMINATE GLOBAL VARIABLES, eliminate ABC for Field
 class GridField(ABC):
-    """Abstract Field Class"""
+    """Abstract Field Class for Fields in the Grid
+    defines type property
+    and __str__ method"""
 
-    def __init__(self):
+    def __init__(self, field):
         super().__init__()
+        self._type = field
 
-    # ToDo REDO FACTORY FUNCTION - locate in Grid?
-    def factory(type):
-        # if type == FIELD: return GridFieldField()
-        # if type == WALL: return GridFieldWall()
-        # if type == GOAL: return GridFieldGoal()
-        # if type == PENALTY: return GridFieldPenalty()
+    def factory(field):
+        if field == 'F': return GridFieldField()
+        if field == 'O': return GridFieldWall()
+        if field == 'E': return GridFieldGoal()
+        if field == 'P': return GridFieldPenalty()
         print("Unknown type!")
 
     def __str__(self):
@@ -178,6 +180,8 @@ class GridField(ABC):
 class GridFieldField(GridField):
     '''
     Class containing the properties of the field field in the grid
+    Adds movement probabilities and movement boolean
+    Inherits type and __str__ function
     '''
     FIELD = "F"
     FIELD_PROBS = {'FIELD_PROB_NOMOVE': {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0},
@@ -191,15 +195,15 @@ class GridFieldField(GridField):
         self._type = FIELD
         self._FIELD_PROBS = FIELD_PROBS
 
-    def get_movement_probs(self, FIELD_PROBS):
+    def get_movement_probs(self):
         return self._FIELD_PROBS
 
     @property
-    def canMoveHere(self):
+    def can_move_here(self):
         return True
 
     @property
-    def hasStaticEvaluationValue(self):
+    def has_static_evaluation_value(self):
         return False
 
 
@@ -223,14 +227,14 @@ class GridFieldWall(GridField):
         return self._WALL_PROB_ANY
 
     @property
-    def canMoveHere(self):
+    def can_move_here(self):
         return False
 
     @property
-    def hasStaticEvaluationValue(self):
+    def has_static_evaluation_value(self):
         return True
 
-    def getStaticEvaluationValue(self):
+    def get_static_evaluation_value(self):
         return self._WALL_REWARD
 
 
@@ -255,14 +259,14 @@ class GridFieldPenalty(GridField):
         return self._PENALTY_PROBS
 
     @property
-    def canMoveHere(self):
+    def can_move_here(self):
         return True
 
     @property
-    def hasStaticEvaluationValue(self):
+    def has_static_evaluation_value(self):
         return True
 
-    def getStaticEvaluationValue(self):
+    def get_static_evaluation_value(self):
         return self._PENALTY_REWARD
 
 ]
@@ -286,14 +290,14 @@ class GridFieldGoal(GridField):
         return self._GOAL_PROBS
 
     @property
-    def canMoveHere(self):
+    def can_move_here(self):
         return True
 
     @property
-    def hasStaticEvaluationValue(self):
+    def has_static_evaluation_value(self):
         return True
 
-    def getStaticEvaluationValue(self):
+    def get_static_evaluation_value(self):
         return self._GOAL_REWARD
 
 
