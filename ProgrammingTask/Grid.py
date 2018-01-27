@@ -187,7 +187,7 @@ class GridFieldField(GridField):
                    'FIELD_PROB_LEFT': {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
 
     def __init__(self, FIELD, FIELD_PROBS):
-        # super().__init__(FIELD)
+        super().__init__()
         self._type = FIELD
         self._FIELD_PROBS = FIELD_PROBS
 
@@ -213,7 +213,7 @@ class GridFieldWall(GridField):
                   LEFT: WALL_PROB_ANY}
 
     def __init__(self, WALL, WALL_PROB_ANY, WALL_PROBS):
-        # super().__init__(WALL)
+        super().__init__()
         self._type = WALL
         self._WALL_REWARD = 0
         self._WALL_PROB_ANY = WALL_PROB_ANY
@@ -246,7 +246,7 @@ class GridFieldPenalty(GridField):
 
 
     def __init__(self, PENALTY, PENALTY_PROBS, PENALTY_PROBS_ANY):
-        # super().__init__(PENALTY)
+        super().__init__()
         self._type = PENALTY
         self._PENALTY_PROBS = PENALTY_PROBS
         self._PENALTY_REWARD = -1
@@ -265,7 +265,7 @@ class GridFieldPenalty(GridField):
     def getStaticEvaluationValue(self):
         return self._PENALTY_REWARD
 
-
+]
 class GridFieldGoal(GridField):
     '''
     Class containing properties for the Goal Field
@@ -277,7 +277,7 @@ class GridFieldGoal(GridField):
                   LEFT: GOAL_PROB_ANY}
 
     def __init__(self, GOAL, GOAL_PROBS):
-        # super().__init__(GOAL)
+        super().__init__()
         self._type = GOAL
         self._GOAL_REWARD = 1
         self._GOAL_PROBS = GOAL_PROBS
