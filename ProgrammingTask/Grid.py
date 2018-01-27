@@ -7,13 +7,6 @@ import random
 # Contains all Settings for the Task
 # Values for fields and definitions of directions
 
-GOAL = "E"
-PENALTY = "P"
-
-
-TYPES = [GOAL, PENALTY]
-
-
 NOMOVE = 0
 UP = 1
 RIGHT = 2
@@ -32,19 +25,7 @@ DIRECTIONS_D = {NOMOVE: NOMOVE_D, UP: UP_D, RIGHT: RIGHT_D, DOWN: DOWN_D, LEFT: 
 
 DIRECTION_SYMBOLS = {NOMOVE: "o", UP: '\u25b2', RIGHT: '>', DOWN: 'V', LEFT: '<'}
 
-GOAL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
-GOAL_PROBS = {NOMOVE: GOAL_PROB_ANY, UP: GOAL_PROB_ANY, RIGHT: GOAL_PROB_ANY, DOWN: GOAL_PROB_ANY,
-              LEFT: GOAL_PROB_ANY}
-GOAL_REWARD = 1
 
-PENALTY_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
-PENALTY_PROBS = {NOMOVE: PENALTY_PROB_ANY, UP: PENALTY_PROB_ANY, RIGHT: PENALTY_PROB_ANY, DOWN: PENALTY_PROB_ANY,
-                 LEFT: PENALTY_PROB_ANY}
-PENALTY_REWARD = -1
-
-
-
-MOVEMENT_PROBS = {GOAL: GOAL_PROBS, PENALTY: PENALTY_PROBS}
 
 class Grid(ABC):
     '''
@@ -67,10 +48,8 @@ class Grid(ABC):
     def get_field(self, x, y):
         return self._grid[x, y]
 
-
     def set_field(self, x, y, obj):
         self._grid[x, y] = obj
-
 
     def get_grid(self):
         return self._grid
@@ -84,6 +63,7 @@ class FieldGrid(Grid):
     """
     Contains a Field with fields
     """
+
     def __init__(self, matrix):
         super().__init__()
         self._grid = np.empty(matrix.shape, dtype=GridField.__class__)
@@ -99,13 +79,13 @@ class PolicyEvaluationGridDepr(Grid):
     with the keys representing directions and the values representing probabilities.
     The values of every field have to sum up to 1.
     """
+
     def __init__(self, shape, initial_policy_evaluation=None):
         super().__init__()
         if initial_policy_evaluation is None:
             self.set_policy_evaluation_random(shape)
         else:
             self.set_policy_evaluation(initial_policy_evaluation)
-
 
     def set_policy_evaluation(self, policy_evaluation_grid):
         self._grid = policy_evaluation_grid
@@ -129,13 +109,13 @@ class PolicyEvaluationGrid(Grid):
     Contains a policy evaluation.
     2dimensional array with evaluation values
     """
-    def __init__(self, shape, initial_policy_evaluation = None):
+
+    def __init__(self, shape, initial_policy_evaluation=None):
         super().__init__()
         if initial_policy_evaluation is None:
             self.set_policy_evaluation_zero(shape)
         else:
             self.set_policy_evaluation(initial_policy_evaluation)
-
 
     def set_policy_evaluation(self, policy_evaluation_grid):
         self._grid = policy_evaluation_grid
@@ -145,7 +125,7 @@ class PolicyEvaluationGrid(Grid):
 
 
 class PolicyGrid(Grid):
-    def __init__(self, shape, policy_grid = None):
+    def __init__(self, shape, policy_grid=None):
         super().__init__()
         self._grid = np.empty(shape)
         if policy_grid is None:
@@ -153,14 +133,12 @@ class PolicyGrid(Grid):
         else:
             self.set_policy(policy_grid)
 
-
     def set_policy(self, policy_grid):
         self._grid = policy_grid
 
-
     def set_random_policy(self):
         self.set_policy(np.random.choice([dir for dir in DIRECTIONS if not dir == NOMOVE], self._grid.shape))
-        #self.set_policy(np.random.choice([dir for dir in DIRECTIONS], self._grid.shape))
+        # self.set_policy(np.random.choice([dir for dir in DIRECTIONS], self._grid.shape))
 
     def print(self):
         field_string = ""
@@ -173,55 +151,48 @@ class PolicyGrid(Grid):
             field_string += " "
         print(field_string)
 
+
 # ToDo REDUCE COMPLEXITY ELIMINATE GLOBAL VARIABLES, eliminate ABC for Field
 class GridField(ABC):
     """Abstract Field Class"""
-    def __init__(self, type):
-        self._type = type
-        super().__init__()
 
-    @abstractmethod
-    def get_movement_probs(self, type):
-        return MOVEMENT_PROBS[type]
+    def __init__(self):
+        super().__init__()
 
     # ToDo REDO FACTORY FUNCTION - locate in Grid?
     def factory(type):
-        #if type == FIELD: return GridFieldField()
-        if type == WALL: return GridFieldWall()
-        if type == GOAL: return GridFieldGoal()
-        if type == PENALTY: return GridFieldPenalty()
+        # if type == FIELD: return GridFieldField()
+        # if type == WALL: return GridFieldWall()
+        # if type == GOAL: return GridFieldGoal()
+        # if type == PENALTY: return GridFieldPenalty()
         print("Unknown type!")
 
     def __str__(self):
         return str(self._type)
 
     @property
-    @abstractmethod
-    def canMoveHere(self):
-        pass
-
-    @property
-    @abstractmethod
-    def hasStaticEvaluationValue(self):
-        pass
-
-    @property
     def type(self):
         return self._type
 
+
 class GridFieldField(GridField):
+    '''
+    Class containing the properties of the field field in the grid
+    '''
     FIELD = "F"
     FIELD_PROBS = {'FIELD_PROB_NOMOVE': {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0},
-    'FIELD_PROB_UP' : {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1},
-    'FIELD_PROB_RIGHT' : {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0},
-    'FIELD_PROB_DOWN' : {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1},
-    'FIELD_PROB_LEFT' : {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
+                   'FIELD_PROB_UP': {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1},
+                   'FIELD_PROB_RIGHT': {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0},
+                   'FIELD_PROB_DOWN': {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1},
+                   'FIELD_PROB_LEFT': {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
 
-    def __init__(self):
-        super().__init__(FIELD)
+    def __init__(self, FIELD, FIELD_PROBS):
+        # super().__init__(FIELD)
+        self._type = FIELD
+        self._FIELD_PROBS = FIELD_PROBS
 
     def get_movement_probs(self, FIELD_PROBS):
-        return FIELD_PROBS
+        return self._FIELD_PROBS
 
     @property
     def canMoveHere(self):
@@ -233,18 +204,22 @@ class GridFieldField(GridField):
 
 
 class GridFieldWall(GridField):
+    '''
+    Class containing properties and probabilities of the wall field
+    '''
+    WALL = 'O'
     WALL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
     WALL_PROBS = {NOMOVE: WALL_PROB_ANY, UP: WALL_PROB_ANY, RIGHT: WALL_PROB_ANY, DOWN: WALL_PROB_ANY,
                   LEFT: WALL_PROB_ANY}
 
-    def __init__(self, WALL_PROB_ANY, WALL_PROBS):
+    def __init__(self, WALL, WALL_PROB_ANY, WALL_PROBS):
         # super().__init__(WALL)
-        self.WALL = 'O'
+        self._type = WALL
         self._WALL_REWARD = 0
         self._WALL_PROB_ANY = WALL_PROB_ANY
         self._WALL_PROBS = WALL_PROBS
 
-    def get_movement_probs(self):
+    def get_movement_probs(self, **kwargs):
         return self._WALL_PROB_ANY
 
     @property
@@ -260,11 +235,24 @@ class GridFieldWall(GridField):
 
 
 class GridFieldPenalty(GridField):
-    def __init__(self):
-        super().__init__(PENALTY)
+    '''
+    Class containing properties for the Penalty Field
+    '''
 
-    def get_movement_probs(self):
-        return super().get_movement_probs(PENALTY)
+    PENALTY = "P"
+    PENALTY_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
+    PENALTY_PROBS = {NOMOVE: PENALTY_PROB_ANY, UP: PENALTY_PROB_ANY, RIGHT: PENALTY_PROB_ANY, DOWN: PENALTY_PROB_ANY,
+                     LEFT: PENALTY_PROB_ANY}
+
+
+    def __init__(self, PENALTY, PENALTY_PROBS, PENALTY_PROBS_ANY):
+        # super().__init__(PENALTY)
+        self._type = PENALTY
+        self._PENALTY_PROBS = PENALTY_PROBS
+        self._PENALTY_REWARD = -1
+
+    def get_movement_probs(self, **kwargs):
+        return self._PENALTY_PROBS
 
     @property
     def canMoveHere(self):
@@ -275,14 +263,27 @@ class GridFieldPenalty(GridField):
         return True
 
     def getStaticEvaluationValue(self):
-        return PENALTY_REWARD
+        return self._PENALTY_REWARD
+
 
 class GridFieldGoal(GridField):
-    def __init__(self):
-        super().__init__(GOAL)
+    '''
+    Class containing properties for the Goal Field
+    '''
+
+    GOAL = "E"
+    GOAL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
+    GOAL_PROBS = {NOMOVE: GOAL_PROB_ANY, UP: GOAL_PROB_ANY, RIGHT: GOAL_PROB_ANY, DOWN: GOAL_PROB_ANY,
+                  LEFT: GOAL_PROB_ANY}
+
+    def __init__(self, GOAL, GOAL_PROBS):
+        # super().__init__(GOAL)
+        self._type = GOAL
+        self._GOAL_REWARD = 1
+        self._GOAL_PROBS = GOAL_PROBS
 
     def get_movement_probs(self):
-        return super().get_movement_probs(GOAL)
+        return self._GOAL_PROBS
 
     @property
     def canMoveHere(self):
@@ -293,10 +294,10 @@ class GridFieldGoal(GridField):
         return True
 
     def getStaticEvaluationValue(self):
-        return GOAL_REWARD
+        return self._GOAL_REWARD
 
 
-def parse_to_matrix(filepath, separator = " "):
+def parse_to_matrix(filepath, separator=" "):
     """
     By: Jan
     Reads a textfile to a matrix.
@@ -313,7 +314,9 @@ def parse_to_matrix(filepath, separator = " "):
         array.append(weight_list)
 
     return array
-	#return np.array(array, dtype = np.unicode_)
+
+
+# return np.array(array, dtype = np.unicode_)
 
 # instantiate parser
 parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
@@ -323,8 +326,10 @@ parser.add_argument('-i', '--iter', type='int',
                     help='how many iterations are performed by the policy iteration', )
 args = parser.parse_args()
 
+
 def main():
     grid = Grid(args.gridfile)
+
 
 if __name__ == '__main__':
     main()
