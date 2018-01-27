@@ -27,11 +27,11 @@ DIRECTION_SYMBOLS = {NOMOVE: "o", UP: '\u25b2', RIGHT: '>', DOWN: 'V', LEFT: '<'
 
 class Grid:
     '''
-    Grid class, initializes with Grid matrix from file
+    Grid class, initializes grid from file, reads input file
+    and instantiates fields accordingly
     has get and set methods for field and string representation
     '''
 
-    # TODO Initialize field when constructor is called from input file...
     def __init__(self, grid_file, separator=" "):
         '''
         Constructor of Grid takes input file and reads it into array
@@ -162,6 +162,8 @@ args = parser.parse_args()
 def main():
     grid = Grid(grid_file=args.grid_file)
     print(grid)
+    print(grid.get_field(0,0))
+    print(grid.get_field(1,1))
 
 
 if __name__ == '__main__':
