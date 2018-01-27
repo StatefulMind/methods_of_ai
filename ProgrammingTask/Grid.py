@@ -3,6 +3,7 @@ from GridSettings import *
 from GridField import GridField
 import numpy as np
 from abc import ABC, abstractmethod
+import argparse
 import random
 
 # Contains all Settings for the Task
@@ -312,3 +313,17 @@ def parse_to_matrix(filepath, separator = " "):
 
     return array
 	#return np.array(array, dtype = np.unicode_)
+
+# instantiate parser
+parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
+parse and print grid file accordingly.''')
+parser.add_argument('gridfile', help='path to input .grid file')
+parser.add_argument('-i', '--iter', type='int',
+                    help='how many iterations are performed by the policy iteration', )
+args = parser.parse_args()
+
+def main():
+    grid = Grid(args.gridfile)
+
+if __name__ == '__main__':
+    main()
