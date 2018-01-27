@@ -1,6 +1,6 @@
 import itertools
 import numpy as np
-from abc import ABC, abstractmethod
+from abc import ABC,
 import argparse
 import random
 
@@ -27,14 +27,14 @@ DIRECTION_SYMBOLS = {NOMOVE: "o", UP: '\u25b2', RIGHT: '>', DOWN: 'V', LEFT: '<'
 
 
 
-class Grid(ABC):
+class Grid():
     '''
-    Abstract Grid class, initializes as none,
+    Grid class, initializes with Grid matrix from file
     has get and set methods for field and string representation
     '''
 
     def __init__(self):
-        super().__init__()
+        self.__init__()
         self._grid = None
 
     def __str__(self):
@@ -57,6 +57,26 @@ class Grid(ABC):
     @property
     def shape(self):
         return self._grid.shape
+
+    def parse_to_matrix(filepath, separator=" "):
+        """
+        By: Jan
+        Reads a textfile to a matrix.
+        Assumptions:Every line corresponds to one line of the matrix
+        Every line has the same number of items
+        separator is the sign with which weights are separated
+        """
+        file = open(filepath, "r")
+
+        array = []
+
+        for line in file.readlines():
+            weight_list = line.strip('\n').split(separator)
+            array.append(weight_list)
+
+        return array
+
+    # return np.array(array, dtype = np.unicode_)
 
 
 class FieldGrid(Grid):
@@ -296,27 +316,6 @@ class GridFieldGoal(GridField):
     def get_static_evaluation_value(self):
         return self._GOAL_REWARD
 
-
-def parse_to_matrix(filepath, separator=" "):
-    """
-    By: Jan
-    Reads a textfile to a matrix.
-    Assumptions:Every line corresponds to one line of the matrix
-    Every line has the same number of items
-    separator is the sign with which weights are separated
-    """
-    file = open(filepath, "r")
-
-    array = []
-
-    for line in file.readlines():
-        weight_list = line.strip('\n').split(separator)
-        array.append(weight_list)
-
-    return array
-
-
-# return np.array(array, dtype = np.unicode_)
 
 # instantiate parser
 parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
