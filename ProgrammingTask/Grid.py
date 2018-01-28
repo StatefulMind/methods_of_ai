@@ -65,9 +65,6 @@ class Grid:
             out += "\n"
         return out
 
-    def get_field(self, x, y):
-        pass
-
     def get_grid_field(self, x, y):
         return self._grid[x][y]
 
@@ -106,20 +103,8 @@ class Grid:
        Generate random initialisation of Directions for fields in policy grid
        :return array:
        '''
-        # self._policy_grid = [[0 for x in range(self.shape[1])] for y in range(self.shape[0])]
-        # for x in range(self.shape[0]):
-        #     for y in range(self.shape[1]):
-        #         val = self.get_grid_field(x, y)._type
-        #         # exclude NOMOVE by starting at 1
-        #         #self._policy_grid[x][y] = (DIRECTIONS[randint(1, len(DIRECTIONS)-1)] if val is 'F'
-        #         #                           else DIRECTION_SYMBOLS[val])
-        #         # self._policy_grid[x].append((DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] if val is 'F'
-        #         #     else DIRECTION_SYMBOLS[val]))
-        #         self._policy_grid[x][y] = DIRECTIONS[randint(1, len(DIRECTIONS) - 1)]
-
         random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
                               for x in range(self.shape[0])]
-        # return random_directions
         self._policy_grid = random_directions
         return self._policy_grid
 
