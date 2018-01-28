@@ -108,7 +108,7 @@ parse and print grid file accordingly.''',
 parser.add_argument('grid_file', help='path to input .grid file')
 parser.add_argument('-i', '--iter', default=5, type=int,
                    help='number of iterations performed by the policy iteration')
-parser.add_argument('-s', '--step', default=False, type=bool,
+parser.add_argument('-s', '--step', action='store_true',
                     help='manual iteration for policy iteration' )
 parser.add_argument('-g', '--gamma', default=0.5, type=float,
                     help='discount value gamma')
@@ -125,8 +125,10 @@ if __name__ == '__main__':
     if args.step:
         while True:
             evaluator.evaluate()
-            if not args.step:
+            response = input('Continue evaluation? [y/n] ')
+            if response is 'n':
                 break
 
-    for i in range(5):
-        evaluator.evaluate()
+    # uncomment here if you want to print it as many times as you specify iterations
+    #for i in range(args.iter):
+    #    evaluator.evaluate()
