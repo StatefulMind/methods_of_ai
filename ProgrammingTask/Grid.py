@@ -67,14 +67,32 @@ class Grid:
             out += "\n"
         return out
 
-    def get_field(self, x, y):
+    def get_grid_field(self, x, y):
         return self._grid[x][y]
 
-    def set_field(self, x, y, obj):
+    def get_policy_field(self, x, y):
+        return self._policy_grid[x][y]
+
+    def get_eval_field(self, x, y):
+        return self._eval_grid[x][y]
+
+    def set_grid_field(self, x, y, obj):
         self._grid[x][y] = obj
+
+    def set_policy_field(self, x, y, obj):
+        self._policy_grid[x][y] = obj
+
+    def set_eval_field(self, x, y, obj):
+        self._eval_grid[x][y] = obj
 
     def get_grid(self):
         return self._grid
+
+    def get_policy_grid(self):
+        return self._policy_grid
+
+    def get_eval_grid(self):
+        return self._eval_grid
 
     @property
     def shape(self):
