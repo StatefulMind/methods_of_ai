@@ -87,17 +87,11 @@ class Evaluator:
         self._grid.print()
         print(eval_directions)
 
-
-
-
-
-
-
-
 def isOutOfBoundaries(x, y, shape):
     '''
     returns if iteration goes out of bounds - since outer walls are not defined and
-    restricted by array lenght limits
+    restricted by array length limits
+    :param x:
     :param y:
     :param shape:
     :return:
@@ -106,19 +100,33 @@ def isOutOfBoundaries(x, y, shape):
 
 
 # instantiate parser
-parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
-parse and print grid file accordingly.''')
+parser = argparse.ArgumentParser(prog='Grid World Evaluator',
+                                 description='''Read grid-file from stdin,
+parse and print grid file accordingly.''',
+                                 usage='%(prog)s [options]',
+                                 prefix_chars='-')
 parser.add_argument('grid_file', help='path to input .grid file')
-# parser.add_argument('-i', '--iter', type='int',
-#                   help='how many iterations are performed by the policy iteration', )
+parser.add_argument('-i', '--iter', default=5, type=int,
+                   help='number of iterations performed by the policy iteration')
+parser.add_argument('-s', '--step', default=False, type=bool,
+                    help='manual iteration for policy iteration' )
+parser.add_argument('-g', '--gamma', default=0.5, type=float,
+                    help='discount value gamma')
 args = parser.parse_args()
 
 if __name__ == '__main__':
     grid = Grid(grid_file=args.grid_file)
     grid.print()
     evaluator = Evaluator(grid, 1)
-    evaluator.iterate(100, 0.04)
+    #evaluator.iterate(20, 0.04)
+    evaluator.iterate(args.iter, args.gamma)
     evaluator.evaluate()
+
+    if args.step:
+        while True:
+            evaluator.evaluate()
+            if not args.step:
+                break
 
     for i in range(5):
         evaluator.evaluate()
