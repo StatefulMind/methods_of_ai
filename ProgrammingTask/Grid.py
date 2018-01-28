@@ -78,7 +78,7 @@ class Grid:
 
     def set_random_policy(self):
        # generate random initialisation of Direction array - exclude NOMOVE by starting at 1
-       random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS))] for y in range(self.shape[1])]
+       random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS)-1)] for y in range(self.shape[1])]
                                  for x in range(self.shape[0])]
        self.set_policy(random_directions)
 
