@@ -115,9 +115,10 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     grid = Grid(grid_file=args.grid_file)
+    grid.print()
     evaluator = Evaluator(grid, 1)
     evaluator.iterate(100, 0.04)
     evaluator.evaluate()
 
-    for i in range(100):
+    for i in range(5):
         evaluator.evaluate()
