@@ -2,7 +2,7 @@ from abc import ABC
 
 # TODO eliminate those
 # Maybe we can solve this differently? global variables are bad practive in Python
-NOMOVE  = 0
+NOMOVE = 0
 UP = 1
 RIGHT = 2
 DOWN = 3
@@ -40,11 +40,11 @@ class GridFieldField(GridField):
     Inherits type and __str__ function
     '''
     FIELD = "F"
-    FIELD_PROBS = {'FIELD_PROB_NOMOVE': {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0},
-                   'FIELD_PROB_UP': {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1},
-                   'FIELD_PROB_RIGHT': {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0},
-                   'FIELD_PROB_DOWN': {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1},
-                   'FIELD_PROB_LEFT': {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
+    FIELD_PROBS = {NOMOVE: {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0},
+                   UP: {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1},
+                   RIGHT: {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0},
+                   DOWN: {NOMOVE: 0, UP: 0, RIGHT: 0.1, DOWN: 0.8, LEFT: 0.1},
+                   LEFT: {NOMOVE: 0, UP: 0.1, RIGHT: 0, DOWN: 0.1, LEFT: 0.8}}
 
     def __init__(self, FIELD=FIELD, FIELD_PROBS=FIELD_PROBS):
         super().__init__(FIELD)
@@ -78,7 +78,7 @@ class GridFieldWall(GridField):
         self._WALL_PROBS = WALL_PROBS
 
     def get_movement_probs(self, **kwargs):
-        return self._WALL_PROB_ANY
+        return self._WALL_PROBS
 
     @property
     def can_move_here(self):

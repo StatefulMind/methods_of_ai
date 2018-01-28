@@ -11,8 +11,6 @@ UP = 1
 RIGHT = 2
 DOWN = 3
 LEFT = 4
-GOAL = 'E'
-PENALTY = 'P'
 
 DIRECTIONS = [NOMOVE, UP, RIGHT, DOWN, LEFT]
 
@@ -66,22 +64,22 @@ class Grid:
         return out
 
     def get_grid_field(self, x, y):
-        return self._grid[x][y]
+        return self._grid[y][x]
 
     def get_policy_field(self, x, y):
-        return self._policy_grid[x][y]
+        return self._policy_grid[y][x]
 
     def get_eval_field(self, x, y):
-        return self._eval_grid[x][y]
+        return self._eval_grid[y][x]
 
     def set_grid_field(self, x, y, obj):
-        self._grid[x][y] = obj
+        self._grid[y][x] = obj
 
     def set_policy_field(self, x, y, obj):
-        self._policy_grid[x][y] = obj
+        self._policy_grid[y][x] = obj
 
     def set_eval_field(self, x, y, obj):
-        self._eval_grid[x][y] = obj
+        self._eval_grid[y][x] = obj
 
     def get_grid(self):
         return self._grid
@@ -89,8 +87,14 @@ class Grid:
     def get_policy_grid(self):
         return self._policy_grid
 
+    def set_policy_grid(self, grid):
+        self._policy_grid = grid
+
     def get_eval_grid(self):
         return self._eval_grid
+
+    def set_eval_grid(self, grid):
+        self._eval_grid = grid
 
     @property
     def shape(self):
@@ -114,6 +118,7 @@ class Grid:
         :param shape:
         '''
         self._eval_grid = [[0 for x in range(self.shape[1])] for y in range(self.shape[0])]
+        return self._eval_grid
 
     def print(self):
         '''
