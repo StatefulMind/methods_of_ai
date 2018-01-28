@@ -29,9 +29,7 @@ DIRECTION_SYMBOLS = {NOMOVE: '\u220E',
                      UP: '\u2191',
                      RIGHT: '\u2192',
                      DOWN: '\u2193',
-                     LEFT: '\u2190',
-                     GOAL: '\u2302',
-                     PENALTY: '\u058E'}
+                     LEFT: '\u2190',}
 
 class Grid:
     '''

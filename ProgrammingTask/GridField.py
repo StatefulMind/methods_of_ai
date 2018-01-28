@@ -91,6 +91,9 @@ class GridFieldWall(GridField):
     def get_static_evaluation_value(self):
         return self._WALL_REWARD
 
+    def __str__(self):
+        return '\u220E'
+
 
 class GridFieldPenalty(GridField):
     '''
@@ -121,6 +124,9 @@ class GridFieldPenalty(GridField):
     def get_static_evaluation_value(self):
         return self._PENALTY_REWARD
 
+    def __str__(self):
+        return '\u058E'
+
 
 class GridFieldGoal(GridField):
     '''
@@ -150,3 +156,6 @@ class GridFieldGoal(GridField):
 
     def get_static_evaluation_value(self):
         return self._GOAL_REWARD
+
+    def __str__(self):
+        return '\u2302'
