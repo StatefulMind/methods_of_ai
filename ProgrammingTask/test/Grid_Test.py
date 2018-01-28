@@ -1,4 +1,3 @@
-import argparse
 import pytest
 import sys
 import os.path
@@ -37,3 +36,13 @@ def test_grid_field_type():
 def test_change_grid():
     grid.set_grid_field(0,0, GridField.factory('P'))
     assert isinstance(grid.get_grid_field(0,0), GridFieldPenalty)
+
+def test_policy_grid():
+    # test random instantiation from policy grid
+    # positions are encoded as int arrays
+    positional_array = [0, 1, 2, 3, 4]
+    assert grid.get_policy_field(0, 0) in positional_array
+
+def test_eval_grid():
+    # test zero instantiation of eval grid
+    assert grid.get_eval_field(0, 0) == 0
