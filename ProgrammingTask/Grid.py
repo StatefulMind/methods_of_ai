@@ -11,6 +11,8 @@ UP = 1
 RIGHT = 2
 DOWN = 3
 LEFT = 4
+GOAL = 'E'
+PENALTY = 'P'
 
 DIRECTIONS = [NOMOVE, UP, RIGHT, DOWN, LEFT]
 
@@ -23,11 +25,13 @@ LEFT_D = (0, -1)
 DIRECTIONS_D = {NOMOVE: NOMOVE_D, UP: UP_D, RIGHT: RIGHT_D, DOWN: DOWN_D, LEFT: LEFT_D}
 
 # use unicode arrows as directional symbols
-DIRECTION_SYMBOLS = {NOMOVE: "\u220E",
+DIRECTION_SYMBOLS = {NOMOVE: '\u220E',
                      UP: '\u2191',
                      RIGHT: '\u2192',
                      DOWN: '\u2193',
-                     LEFT: '\u2190'}
+                     LEFT: '\u2190',
+                     GOAL: '\u2302',
+                     PENALTY: '\u058E'}
 
 
 class Grid:
@@ -81,13 +85,20 @@ class Grid:
 
     def set_random_policy(self):
         '''
-       Generate random initialisation of Direction for policy grid
+       Generate random initialisation of Directions for fields in policy grid
        :return array:
        '''
-        # exclude NOMOVE by starting at 1
-        random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
-                             for x in range(self.shape[0])]
-        return random_directions
+        for x in range(self.shape[0]):
+            for y in range(self.shape[1]):
+                val = self.get_field(x, y)
+                # exclude NOMOVE by starting at 1
+                self._policy_grid[x][y] = (DIRECTIONS[randint(1, len(DIRECTIONS)-1)] if val is 'F'
+                                           else DIRECTION_SYMBOLS[val])
+
+        # random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
+        #                      for x in range(self.shape[0])]
+        # return random_directions
+        return self._policy_grid
 
     def set_policy_evaluation_zero(self):
         '''
