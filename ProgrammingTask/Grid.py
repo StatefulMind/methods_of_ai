@@ -1,5 +1,6 @@
 import itertools
 import argparse
+from random import randint
 
 from ProgrammingTask.GridField import GridField
 
@@ -32,7 +33,7 @@ class Grid:
     has get and set methods for field and string representation
     '''
 
-    def __init__(self, grid_file, separator=" "):
+    def __init__(self, grid_file, separator=" ", policy_grid=None):
         '''
         Constructor of Grid takes input file and reads it into array
         that is used to instantiate the Fields from GridFields
@@ -47,6 +48,7 @@ class Grid:
                 self._array.append(weight_list)
         # use grid values as input for field factory and instantiate the grid
         self._grid = [[GridField.factory(field_type) for field_type in line] for line in self._array]
+        self._policy_grid = self.set_policy(policy_grid) if policy_grid else self.set_random_policy()
 
     def __str__(self):
         out = ""
@@ -71,6 +73,15 @@ class Grid:
         y = len(self._grid[0])
         return [x, y]
 
+    def set_policy(self, policy_grid):
+        self._grid = policy_grid
+
+    def set_random_policy(self):
+       # generate random initialisation of Direction array - exclude NOMOVE by starting at 1
+       random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS))] for y in range(self.shape[1])]
+                                 for x in range(self.shape[0])]
+       self.set_policy(random_directions)
+
 
 class PolicyEvaluationGrid(Grid):
     """
@@ -92,23 +103,7 @@ class PolicyEvaluationGrid(Grid):
         self._grid = np.zeros(shape)
 
 
-class PolicyGrid(Grid):
-    def __init__(self, shape, policy_grid=None):
-        super().__init__()
-        self._grid = np.empty(shape)
-        if policy_grid is None:
-            self.set_random_policy()
-        else:
-            self.set_policy(policy_grid)
-
-    def set_policy(self, policy_grid):
-        self._grid = policy_grid
-
-    def set_random_policy(self):
-        self.set_policy(np.random.choice([dir for dir in DIRECTIONS if not dir == NOMOVE], self._grid.shape))
-        # self.set_policy(np.random.choice([dir for dir in DIRECTIONS], self._grid.shape))
-
-    def print(self):
+    def __str__(self):
         field_string = ""
         line_old = 0
         for line, row in itertools.product(range(self.shape[0]), range(self.shape[1])):
@@ -117,7 +112,7 @@ class PolicyGrid(Grid):
                 line_old = line
             field_string += DIRECTION_SYMBOLS[self.get_field(line, row)]
             field_string += " "
-        print(field_string)
+        return field_string
 
 
 # instantiate parser
@@ -130,10 +125,11 @@ args = parser.parse_args()
 
 
 def main():
+    # those would be test cases - ToDo put into pytest under ./test when done
     grid = Grid(grid_file=args.grid_file)
     print(grid)
-    print(grid.get_field(0,0))
-    print(grid.get_field(1,1))
+    print('Get field at [0,0]... {}'.format(grid.get_field(0,0)))
+    print('Get field at [1,1]... {}'.format(grid.get_field(1,1)))
     grid.set_field(1,1,"P")
     print('Adding Penalty at [1,1]...')
     print(grid)
