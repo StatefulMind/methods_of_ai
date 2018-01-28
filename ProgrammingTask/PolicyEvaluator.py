@@ -1,4 +1,4 @@
-
+#test
 import ProgrammingTask.ConvergenceCriterion as ConvergenceCriterion
 from tools import iter2d, isOutOfBoundaries
 import numpy as np
