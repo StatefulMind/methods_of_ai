@@ -106,21 +106,21 @@ class Grid:
        Generate random initialisation of Directions for fields in policy grid
        :return array:
        '''
-        self._policy_grid = []
-        for x in range(self.shape[0]):
-            self._policy_grid.append([])
-            for y in range(self.shape[1]):
-                val = self.get_grid_field(x, y)._type
-                # exclude NOMOVE by starting at 1
-                #self._policy_grid[x][y] = (DIRECTIONS[randint(1, len(DIRECTIONS)-1)] if val is 'F'
-                #                           else DIRECTION_SYMBOLS[val])
-                # self._policy_grid[x].append((DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] if val is 'F'
-                #     else DIRECTION_SYMBOLS[val]))
-                self._policy_grid[x].append(DIRECTIONS[randint(1, len(DIRECTIONS) - 1)])
+        # self._policy_grid = [[0 for x in range(self.shape[1])] for y in range(self.shape[0])]
+        # for x in range(self.shape[0]):
+        #     for y in range(self.shape[1]):
+        #         val = self.get_grid_field(x, y)._type
+        #         # exclude NOMOVE by starting at 1
+        #         #self._policy_grid[x][y] = (DIRECTIONS[randint(1, len(DIRECTIONS)-1)] if val is 'F'
+        #         #                           else DIRECTION_SYMBOLS[val])
+        #         # self._policy_grid[x].append((DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] if val is 'F'
+        #         #     else DIRECTION_SYMBOLS[val]))
+        #         self._policy_grid[x][y] = DIRECTIONS[randint(1, len(DIRECTIONS) - 1)]
 
-        # random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
-        #                      for x in range(self.shape[0])]
+        random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
+                              for x in range(self.shape[0])]
         # return random_directions
+        self._policy_grid = random_directions
         return self._policy_grid
 
     def set_policy_evaluation_zero(self):
@@ -128,7 +128,7 @@ class Grid:
         initializes array of zero as initial evaluation grid
         :param shape:
         '''
-        self._eval_grid = [[0 * x for x in range(self.shape[1])] for y in range(self.shape[0])]
+        self._eval_grid = [[0 for x in range(self.shape[1])] for y in range(self.shape[0])]
 
     def print(self):
         '''
