@@ -22,7 +22,12 @@ LEFT_D = (0, -1)
 
 DIRECTIONS_D = {NOMOVE: NOMOVE_D, UP: UP_D, RIGHT: RIGHT_D, DOWN: DOWN_D, LEFT: LEFT_D}
 
-DIRECTION_SYMBOLS = {NOMOVE: "o", UP: '\u25b2', RIGHT: '>', DOWN: 'V', LEFT: '<'}
+# use unicode arrows as directional symbols
+DIRECTION_SYMBOLS = {NOMOVE: "\u220E",
+                     UP: '\u2191',
+                     RIGHT: '\u2192',
+                     DOWN: '\u2193',
+                     LEFT: '\u2190'}
 
 
 class Grid:
@@ -84,12 +89,12 @@ class Grid:
                              for x in range(self.shape[0])]
         return random_directions
 
-    def set_policy_evaluation_zero(self, shape):
+    def set_policy_evaluation_zero(self):
         '''
         initializes array of zero as initial evaluation grid
         :param shape:
         '''
-        self._eval_grid = [[0 * x for x in range(shape(1))] for y in range(shape[0])]
+        self._eval_grid = [[0 * x for x in range(self.shape[1])] for y in range(self.shape[0])]
 
     def print(self):
         '''
@@ -127,6 +132,11 @@ def main():
     print(grid)
     print('Get Shape Property of grid...')
     print(grid.shape)
+
+    # get initial grid again
+    dir_grid = Grid(grid_file=args.grid_file)
+    # print directions string
+    dir_grid.print()
 
 
 if __name__ == '__main__':
