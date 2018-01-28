@@ -60,46 +60,16 @@ class Grid:
         return self._grid[x][y]
 
     def set_field(self, x, y, obj):
-        self._grid[x, y] = obj
+        self._grid[x][y] = obj
 
     def get_grid(self):
         return self._grid
 
     @property
     def shape(self):
-        return self._grid.shape
-
-
-class PolicyEvaluationGridDepr(Grid):
-    """
-    Contains a policy evaluation.
-    Every element of self._grid contains a dictionary,
-    with the keys representing directions and the values representing probabilities.
-    The values of every field have to sum up to 1.
-    """
-
-    def __init__(self, shape, initial_policy_evaluation=None):
-        super().__init__()
-        if initial_policy_evaluation is None:
-            self.set_policy_evaluation_random(shape)
-        else:
-            self.set_policy_evaluation(initial_policy_evaluation)
-
-    def set_policy_evaluation(self, policy_evaluation_grid):
-        self._grid = policy_evaluation_grid
-
-    def set_policy_evaluation_random(self, shape):
-        """
-        Generates a random policy evaluation.
-        Every field in policy_grid sums up to 1, the indices of the dictionary indicate the direction
-        """
-        policy_grid = np.empty(shape, dtype=dict)
-        content = {}
-        for x, y in itertools.product(range(shape[0]), range(shape[1])):
-            for (direction, value) in zip(DIRECTIONS, np.random.dirichlet(np.ones(len(DIRECTIONS)), size=1)[0]):
-                content[direction] = value
-            policy_grid[x, y] = content
-        self.set_policy_evaluation(policy_grid)
+        x = len(self._grid)
+        y = len(self._grid[0])
+        return [x, y]
 
 
 class PolicyEvaluationGrid(Grid):
@@ -164,6 +134,11 @@ def main():
     print(grid)
     print(grid.get_field(0,0))
     print(grid.get_field(1,1))
+    grid.set_field(1,1,"P")
+    print('Adding Penalty at [1,1]...')
+    print(grid)
+    print('Get Shape Property of grid...')
+    print(grid.shape)
 
 
 if __name__ == '__main__':
