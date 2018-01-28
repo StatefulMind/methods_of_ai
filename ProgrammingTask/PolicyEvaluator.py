@@ -1,8 +1,7 @@
-from Grid import *
-import PolicyIterator as pi
-from ConvergenceCriterion import *
+import ProgrammingTask.ConvergenceCriterion as ConvergenceCriterion
 from tools import iter2d, isOutOfBoundaries
-from Grid import PolicyGrid, PolicyEvaluationGrid
+import numpy as np
+from ProgrammingTask.Grid import Grid
 
 def evaluate_policy(policyEvaluationGrid):
     policyGrid = PolicyGrid(policyEvaluationGrid.shape)
@@ -20,7 +19,7 @@ def policy_optimizer(fieldGrid, discount, step_cost, evaluation_convergence_crit
         if improvement_convergence_criterion is None:
             improvement_convergence_criterion = ConvergenceCriterionImprovementEpsilon(epsilon_change=0)
 
-        old_policy_grid = PolicyGrid(shape)
+        old_policy_grid = Grid(shape)
 
 
         while True:

@@ -33,7 +33,6 @@ DIRECTION_SYMBOLS = {NOMOVE: '\u220E',
                      GOAL: '\u2302',
                      PENALTY: '\u058E'}
 
-
 class Grid:
     '''
     Grid class, initializes grid from file, reads input file
