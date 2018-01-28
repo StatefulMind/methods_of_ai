@@ -1,44 +1,39 @@
 import argparse
 import pytest
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from Grid import Grid
+from GridField import GridField
+from GridField import GridFieldField
+from GridField import GridFieldPenalty
 
-# instantiate parser
-parser = argparse.ArgumentParser(description='''Read grid-file from stdin,
-parse and print grid file accordingly.''')
-parser.add_argument('grid_file', help='path to input .grid file')
-# parser.add_argument('-i', '--iter', type='int',
-#                   help='how many iterations are performed by the policy iteration', )
-args = parser.parse_args()
+# we are in the root dir due to path.append...
+grid_path = './grids/3by4.grid'
+grid = Grid(grid_path)
 
 def test_grid_create():
-    pass
+    assert grid is not None
+    assert isinstance(grid, Grid)
+
+    comp_array = []
+    with open(grid_path) as read_file:
+        for line in read_file.readlines():
+            values = line.strip('\n').split()
+            comp_array.append(values)
+    assert grid._array == comp_array
 
 def test_grid_shape():
-    pass
+    assert grid.shape == [3,4]
 
 def test_grid_values():
-    pass
+    # check correct string value
+    assert str(grid.get_grid_field(0,0)) == 'F'
 
-def test_grid_print():
-    pass
+def test_grid_field_type():
+    # check correct type
+    assert isinstance(grid.get_grid_field(0, 0), GridFieldField)
 
-
-def main():
-    # those would be test cases - ToDo put into pytest under ./test when done
-    grid = Grid(grid_file=args.grid_file)
-    print(grid)
-    print('Get field at [0,0]... {}'.format(grid.get_grid_field(0, 0)))
-    print('Get field at [1,1]... {}'.format(grid.get_grid_field(1, 1)))
-    grid.set_grid_field(1, 1, "P")
-    print('Adding Penalty at [1,1]...')
-    print(grid)
-    print('Get Shape Property of grid...')
-    print(grid.shape)
-
-    # get initial grid again
-    dir_grid = Grid(grid_file=args.grid_file)
-    # print directions string
-    dir_grid.print()
-
-
-if __name__ == '__main__':
-    main()
+def test_change_grid():
+    grid.set_grid_field(0,0, GridField.factory('P'))
+    assert isinstance(grid.get_grid_field(0,0), GridFieldPenalty)
