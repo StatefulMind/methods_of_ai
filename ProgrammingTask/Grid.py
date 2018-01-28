@@ -67,6 +67,9 @@ class Grid:
             out += "\n"
         return out
 
+    def get_field(self, x, y):
+        pass
+
     def get_grid_field(self, x, y):
         return self._grid[x][y]
 
@@ -105,12 +108,17 @@ class Grid:
        Generate random initialisation of Directions for fields in policy grid
        :return array:
        '''
+        self._policy_grid = []
         for x in range(self.shape[0]):
+            self._policy_grid.append([])
             for y in range(self.shape[1]):
-                val = self.get_field(x, y)
+                val = self.get_grid_field(x, y)._type
                 # exclude NOMOVE by starting at 1
-                self._policy_grid[x][y] = (DIRECTIONS[randint(1, len(DIRECTIONS)-1)] if val is 'F'
-                                           else DIRECTION_SYMBOLS[val])
+                #self._policy_grid[x][y] = (DIRECTIONS[randint(1, len(DIRECTIONS)-1)] if val is 'F'
+                #                           else DIRECTION_SYMBOLS[val])
+                # self._policy_grid[x].append((DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] if val is 'F'
+                #     else DIRECTION_SYMBOLS[val]))
+                self._policy_grid[x].append(DIRECTIONS[randint(1, len(DIRECTIONS) - 1)])
 
         # random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
         #                      for x in range(self.shape[0])]
@@ -153,9 +161,9 @@ def main():
     # those would be test cases - ToDo put into pytest under ./test when done
     grid = Grid(grid_file=args.grid_file)
     print(grid)
-    print('Get field at [0,0]... {}'.format(grid.get_field(0, 0)))
-    print('Get field at [1,1]... {}'.format(grid.get_field(1, 1)))
-    grid.set_field(1, 1, "P")
+    print('Get field at [0,0]... {}'.format(grid.get_grid_field(0, 0)))
+    print('Get field at [1,1]... {}'.format(grid.get_grid_field(1, 1)))
+    grid.set_grid_field(1, 1, "P")
     print('Adding Penalty at [1,1]...')
     print(grid)
     print('Get Shape Property of grid...')
