@@ -2,7 +2,7 @@ import itertools
 import argparse
 from random import randint
 
-from ProgrammingTask.GridField import GridField
+from GridField import GridField
 
 # TODO eliminate those
 # Maybe we can solve this differently? global variables are bad practive in Python
