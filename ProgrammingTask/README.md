@@ -3,7 +3,8 @@
 Read a gridworld and apply policy iteration according to user input.
 
 Dependencies:
-+ python3
++ python3 v3.6.4
++ argparse v1.1
 
 Optional:
 + pytest v3.2.1 
