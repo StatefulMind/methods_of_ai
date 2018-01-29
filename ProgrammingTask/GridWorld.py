@@ -21,7 +21,7 @@ parser.add_argument('-c', '--cost', default = 0.04,
 parser.add_argument('-g', '--gamma', default=1, type=float,
                     help='discount value gamma')
 parser.add_argument('-eps', '--epsilon', default=0, type=float,
-                    help='discount value gamma')
+                    help='convergence value epsilon')
 parser.add_argument('-v', '--verbose', action='store_true',
                     help='print verbose output (every intermediate evaluation step)')
 args = parser.parse_args()
