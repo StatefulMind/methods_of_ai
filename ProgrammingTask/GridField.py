@@ -4,7 +4,8 @@ from Constants import NOMOVE, UP, DOWN, LEFT, RIGHT
 class GridField(ABC):
     """Abstract Field Class for Fields in the Grid
     defines type property
-    and __str__ method"""
+    and __str__ method
+    contains factory for instantiation of fields"""
 
     def __init__(self, field):
         super().__init__()
@@ -63,6 +64,7 @@ class GridFieldField(GridField):
 class GridFieldWall(GridField):
     '''
     Class containing properties and probabilities of the wall field
+    overwrites __str__ with Wall symbol
     '''
     WALL = 'O'
     WALL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
@@ -106,6 +108,8 @@ class GridFieldWall(GridField):
 class GridFieldPenalty(GridField):
     '''
     Class containing properties for the Penalty Field
+    contains movement probabilities for the penalty field
+    overwrites __str__ with penalty symbol
     '''
 
     PENALTY = "P"
@@ -120,7 +124,7 @@ class GridFieldPenalty(GridField):
         self._PENALTY_PROBS = PENALTY_PROBS
         self._PENALTY_REWARD = -1
 
-    def get_movement_probs(self, **kwargs):
+    def get_movement_probs(self):
         return self._PENALTY_PROBS
 
     @property
@@ -149,9 +153,12 @@ class GridFieldPenalty(GridField):
 class GridFieldGoal(GridField):
     '''
     Class containing properties for the Goal Field
+    contains movement probabilities for the goal field
+    overwrites __str__ with goal symbol
     '''
 
     GOAL = "E"
+    # if in a goal state you do not move
     GOAL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
 
     # Represents the probabilities in which directions you might move if you perform an action
