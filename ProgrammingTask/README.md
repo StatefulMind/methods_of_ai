@@ -1,6 +1,6 @@
 ## Methods of AI Programming Task
 
-Read a gridworld and apply policy iteration according to user input.
+Read a gridworld file and apply policy iteration according to user input.
 Usage: 
 `python GridWorld.py -h` for help.
 
@@ -34,5 +34,6 @@ Constants.py    - contains static global variables.
 Evaluator.py    - works with the grid; iterates over it and improves policy
 Grid.py         - contains grid class that constructs the grid, evaluation and policy grid with all according methods
 GridField.py    - contains class-structure for the different types of fields
+GridWorld.py    - contains executable main function and Parser that handles all inputs and runs specified methods
 
 ![Maze Westworld](https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Ftz1bngoyiw1y.jpg&f=1)
