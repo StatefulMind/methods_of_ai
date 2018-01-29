@@ -56,7 +56,8 @@ class Evaluator:
                 succ_array_new[y][x] = -step_cost + (discount ** i) * successor_sum
 
             # Checks if convergence appeared
-            if not convergence_epsilon is None and self.convergence_check(succ_array_prev, succ_array_new, convergence_epsilon=convergence_epsilon):
+            if not convergence_epsilon is None and self.convergence_check(succ_array_prev, succ_array_new,
+                                                                          convergence_epsilon=convergence_epsilon):
                 print("Stopped policy iteration due to convergence (delta < {})".format(convergence_epsilon))
                 break
 

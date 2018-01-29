@@ -2,10 +2,10 @@
 
 Read a gridworld and apply policy iteration according to user input.
 Usage: 
-`Evaluator -h` for help.
+`python GridWorld.py -h` for help.
 
  
-Grid World Evaluator \[options\]
+GridWorld \[options\]
 
 Necessary are the positional arguments...
 
@@ -24,11 +24,7 @@ Dependencies:
 + argparse v1.1
 + numpy v1.13.3
 
-Optional:
-+ pytest v3.2.1 
-
-Test cases are located under test/Grid_Test and are tested automatically when
-`pytest ./test/Grid_Test.py`
-is run from the Shell.
+Constants.py - contains static global variables.
+Evaluator.py - works with the grid; iterates over it and improves policy
 
 ![Maze Westworld](https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Ftz1bngoyiw1y.jpg&f=1)

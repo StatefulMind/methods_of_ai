@@ -1,5 +1,4 @@
 import itertools
-from random import randint
 import random
 from Constants import DIRECTIONS, DIRECTION_SYMBOLS, UP, RIGHT, DOWN, LEFT
 
@@ -29,7 +28,9 @@ class Grid:
                 self._array.append(weight_list)
         # use grid values as input for field factory and instantiate the grid
         self._grid = [[GridField.factory(field_type) for field_type in line] for line in self._array]
+        # instantiate the policy grid if parsed otherwise initialise randomly
         self._policy_grid = policy_grid if policy_grid else self.set_random_policy()
+        # instantiate evaluation grid if given otherwise initialise with zero array
         self._eval_grid = initial_policy_eval if initial_policy_eval else self.set_policy_evaluation_zero()
 
 
@@ -94,7 +95,7 @@ class Grid:
     def set_policy_evaluation_zero(self):
         '''
         initializes array of zero as initial evaluation grid
-        :param shape:
+        :return array: Zero evaluation
         '''
         self._eval_grid = [[0 for x in range(self.shape_x)] for y in range(self.shape_y)]
         return self._eval_grid
@@ -102,6 +103,7 @@ class Grid:
     def get_policy_str(self):
         '''
         Converts policy values into direction symbols
+        :return String: representation of the field
         '''
 
         field_string = ""
@@ -124,14 +126,13 @@ class Grid:
     def print_policy(self):
         """
         Prints the policy in a nice human-readable way
-        :return:
         """
         print(self.get_policy_str())
 
     def get_grid_str(self):
         """
-                :return: Returns a readable version of the grid. With x in columns, y in rows
-                """
+        :return: readable String of the grid.
+        """
         out = ""
         for line in self._grid:
             for field in line:
