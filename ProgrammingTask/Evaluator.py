@@ -1,91 +1,121 @@
 from itertools import product
-from Grid import Grid
-import argparse
 import numpy as np
-
-NOMOVE = 0
-UP = 1
-RIGHT = 2
-DOWN = 3
-LEFT = 4
-
-DIRECTIONS = [NOMOVE, UP, RIGHT, DOWN, LEFT]
-
-NOMOVE_D = (0, 0)
-UP_D = (-1, 0)
-RIGHT_D = (0, 1)
-DOWN_D = (1, 0)
-LEFT_D = (0, -1)
-
-DIRECTIONS_D = {NOMOVE: NOMOVE_D, UP: UP_D, RIGHT: RIGHT_D, DOWN: DOWN_D, LEFT: LEFT_D}
+from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 
 class Evaluator:
     '''
     Evaluates generated policy and improves on it
     '''
 
-    def __init__(self, grid, discount):
+    def __init__(self, grid):
         self._grid = grid
-        self._discount = discount
 
-    def iterate(self, iterations, step_cost):
-        succ_array = [[0 for x in range(self._grid.shape[1])] for y in range(self._grid.shape[0])]
+
+    def iterate(self, iterations, step_cost, discount, convergence_epsilon = None):
+        """
+        Performs the policy iteration without an evaluation
+        Writes the computations into eval_grid in our grid
+        :param iterations: How many iterations of policy iteration should be done
+        :param step_cost: The cost for every step done by the agent
+        :param discount: The discount factor gamma
+        :param convergence_epsilon: When in one iteration step the summed absolute change of the iteration fields change less than convergence_epsilon, the iteration is stopped due to convergence
+        :return:
+        """
+        # succ_array_prev encodes the previous step of policy iteration
+        succ_array_prev = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
+
+
         for i in range(iterations):
-            for x, y in product(range(0, self._grid.shape[1]), range(0, self._grid.shape[0])):
-                policy = self._grid.get_policy_field(x, y)
+            # succ_array_new encodes the recent step of policy iteration
+            succ_array_new = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
+
+            for x, y in product(range(0, self._grid.shape_x), range(0, self._grid.shape_y)):
+                policy = self._grid.get_policy_field(x, y) # The direction the policy dictates for that position
                 field = self._grid.get_grid_field(x, y)
 
+                # Goals and penalties have static evaluation values (e.g., 1 or -1) We can skip the iteration step here
                 if field.has_static_evaluation_value:
-                    succ_array[y][x] = field.get_static_evaluation_value()
+                    succ_array_new[y][x] = field.get_static_evaluation_value()
                     continue
 
+                # Get the probabilities to move to other directions than the policy dictates
                 movement_probs = field.get_movement_probs()[policy]
+
+                # Compute the rewards here for every possible direction of movement and sum them up
                 successor_sum = 0
                 for dir, movement_prob in movement_probs.items():
                     x_mv, y_mv = np.add([x, y], DIRECTIONS_D[dir])
                     if isOutOfBoundaries(x_mv, y_mv, self._grid.shape):
                         #Stay at the same field
                         x_mv, y_mv = [x, y]
-                    elif not field.can_move_here:
+                    elif not self._grid.get_grid_field(x_mv, y_mv).can_move_here:
                         x_mv, y_mv = [x, y]
-                    else:
-                        pass
-                    successor_sum += movement_prob * succ_array[y][x]
-                #Immediate reward still missing
-                succ_array[y][x] = -step_cost + (self._discount**i) * successor_sum
+                    successor_sum += movement_prob * succ_array_prev[y_mv][x_mv]
 
-        self._grid.set_eval_grid(succ_array)
-        print(succ_array)
+                # Sum the step_cost and the discounted rewards for our new future reward
+                succ_array_new[y][x] = -step_cost + (discount ** i) * successor_sum
+
+            # Checks if convergence appeared
+            if not convergence_epsilon is None and self.convergence_check(succ_array_prev, succ_array_new, convergence_epsilon=convergence_epsilon):
+                print("Stopped policy iteration due to convergence (delta < {})".format(convergence_epsilon))
+                break
+
+            succ_array_prev = succ_array_new
+        self._grid.set_eval_grid(succ_array_new)
 
     def evaluate(self):
+        """
+        Performs policy evaluation.
+        Assumes, that previously policy iteration has been calles and that a meaningful solution is in the eval_grid
+        Writes the optimized policy into policy in _grid
+        :return:
+        """
+
+        #For every possible direction we need to evaluate every single field
         eval_directions = {}
         for direction in DIRECTIONS:
-            eval_directions[direction] = [[0 for x in range(self._grid.shape[1])] for y in range(self._grid.shape[0])]
-            for x, y in product(range(0, self._grid.shape[1]), range(0, self._grid.shape[0])):
+            eval_directions[direction] = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
 
+            for x, y in product(range(0, self._grid.shape_x), range(0, self._grid.shape_y)):
                 field = self._grid.get_grid_field(x, y)
+                # Gets the probability to move to unwanted directions when performing the action of going to direction
                 movement_probs = field.get_movement_probs()[direction]
+
                 successor_sum = 0
                 for dir_real, movement_prob in movement_probs.items():
                     x_mv, y_mv = np.add([x, y], DIRECTIONS_D[dir_real])
                     if isOutOfBoundaries(x_mv, y_mv, self._grid.shape):
                         # Stay at the same field
                         x_mv, y_mv = [x, y]
-                    elif not field.can_move_here:
+                    elif not self._grid.get_grid_field(x_mv, y_mv).can_move_here:
                         x_mv, y_mv = [x, y]
-                    else:
-                        pass
                     successor_sum += movement_prob * self._grid.get_eval_field(x_mv, y_mv)
 
+                # Writing the expected future reward for going to direction from field x, y to the evaluation dictionary
                 eval_directions[direction][y][x] = successor_sum
 
-        new_policy = [[0 for x in range(self._grid.shape[1])] for y in range(self._grid.shape[0])]
-        for x, y in product(range(0, self._grid.shape[1]), range(0, self._grid.shape[0])):
-            new_policy[y][x] = np.argmax({direction: eval_directions[direction][y][x] for direction in DIRECTIONS})
-        print(new_policy)
+        # Setting up an empty matrix for our optimized policy
+        new_policy = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
+        for x, y in product(range(0, self._grid.shape_x), range(0, self._grid.shape_y)):
+            # For each field we find the optimal direction to go
+            dir = {direction: eval_directions[direction][y][x] for direction in DIRECTIONS if not direction == NOMOVE}
+            new_policy[y][x] = max(dir, key=dir.get)
+
+
         self._grid.set_policy_grid(new_policy)
-        self._grid.print()
-        print(eval_directions)
+
+    def convergence_check(self, old_iteration_step, new_iteration_step, convergence_epsilon):
+        """
+        Checks, if the iteration steps are closer to each other than convergence_epsilon
+        :param old_iteration_step:
+        :param new_iteration_step:
+        :param convergence_epsilon:
+        :return:
+        """
+        diff = 0
+        for x, y in product(range(0, self._grid.shape_x), range(0, self._grid.shape_y)):
+            diff += abs(old_iteration_step[y][x] - new_iteration_step[y][x])
+        return diff < convergence_epsilon
 
 def isOutOfBoundaries(x, y, shape):
     '''
@@ -96,39 +126,5 @@ def isOutOfBoundaries(x, y, shape):
     :param shape:
     :return:
     '''
-    return x < 0 or y < 0 or x >= shape[1] or y >= shape[0]
+    return x < 0 or y < 0 or x >= shape[0] or y >= shape[1]
 
-
-# instantiate parser
-parser = argparse.ArgumentParser(prog='Grid World Evaluator',
-                                 description='''Read grid-file from stdin,
-parse and print grid file accordingly.''',
-                                 usage='%(prog)s [options]',
-                                 prefix_chars='-')
-parser.add_argument('grid_file', help='path to input .grid file')
-parser.add_argument('-i', '--iter', default=5, type=int,
-                   help='number of iterations performed by the policy iteration')
-parser.add_argument('-s', '--step', action='store_true',
-                    help='manual iteration for policy iteration' )
-parser.add_argument('-g', '--gamma', default=0.5, type=float,
-                    help='discount value gamma')
-args = parser.parse_args()
-
-if __name__ == '__main__':
-    grid = Grid(grid_file=args.grid_file)
-    grid.print()
-    evaluator = Evaluator(grid, 1)
-    #evaluator.iterate(20, 0.04)
-    evaluator.iterate(args.iter, args.gamma)
-    evaluator.evaluate()
-
-    if args.step:
-        while True:
-            evaluator.evaluate()
-            response = input('Continue evaluation? [y/n] ')
-            if response is 'n':
-                break
-
-    # uncomment here if you want to print it as many times as you specify iterations
-    #for i in range(args.iter):
-    #    evaluator.evaluate()

@@ -1,32 +1,9 @@
 import itertools
 from random import randint
+import random
+from Constants import DIRECTIONS, DIRECTION_SYMBOLS, UP, RIGHT, DOWN, LEFT
 
 from GridField import GridField
-
-# TODO eliminate those
-# Maybe we can solve this differently? global variables are bad practive in Python
-NOMOVE = 0
-UP = 1
-RIGHT = 2
-DOWN = 3
-LEFT = 4
-
-DIRECTIONS = [NOMOVE, UP, RIGHT, DOWN, LEFT]
-
-NOMOVE_D = (0, 0)
-UP_D = (-1, 0)
-RIGHT_D = (0, 1)
-DOWN_D = (1, 0)
-LEFT_D = (0, -1)
-
-DIRECTIONS_D = {NOMOVE: NOMOVE_D, UP: UP_D, RIGHT: RIGHT_D, DOWN: DOWN_D, LEFT: LEFT_D}
-
-# use unicode arrows as directional symbols
-DIRECTION_SYMBOLS = {NOMOVE: '\u220E',
-                     UP: '\u2191',
-                     RIGHT: '\u2192',
-                     DOWN: '\u2193',
-                     LEFT: '\u2190',}
 
 class Grid:
     '''
@@ -36,14 +13,15 @@ class Grid:
     has get and set methods for field and string representation
     '''
 
-    def __init__(self, grid_file, separator=" ", policy_grid=None, initial_policy_eval=None):
+    def __init__(self, grid_file, policy_grid=None, initial_policy_eval=None):
         '''
         Constructor of Grid takes input file and reads it into array
         that is used to instantiate the Fields from GridFields
         bound to _grid
-        :param grid_file:
-        :param separator:
+        :param grid_file: Filepath to a file representing a grid. Expects valid inputs. Fields should be separated by separator, lines should end with '\n'
         '''
+        separator = " "
+
         self._array = []
         with open(grid_file) as read_file:
             for line in read_file.readlines():
@@ -54,13 +32,9 @@ class Grid:
         self._policy_grid = policy_grid if policy_grid else self.set_random_policy()
         self._eval_grid = initial_policy_eval if initial_policy_eval else self.set_policy_evaluation_zero()
 
+
     def __str__(self):
-        out = ""
-        for line in self._grid:
-            for field in line:
-                out += f' {str(field)} '
-            out += "\n"
-        return out
+        return self.get_grid_str()
 
     def get_grid_field(self, x, y):
         return self._grid[y][x]
@@ -97,17 +71,23 @@ class Grid:
 
     @property
     def shape(self):
-        x = len(self._grid)
-        y = len(self._grid[0])
-        return [x, y]
+        return [self.shape_x, self.shape_y]
+
+    @property
+    def shape_x(self):
+        return len(self._grid[0])
+
+    @property
+    def shape_y(self):
+        return len(self._grid)
 
     def set_random_policy(self):
         '''
-       Generate random initialisation of Directions for fields in policy grid
-       :return array:
+       Generate random initialisation of directions for fields in policy grid
+       :return array: Random policy
        '''
-        random_directions = [[DIRECTIONS[randint(1, len(DIRECTIONS) - 1)] for y in range(self.shape[1])]
-                              for x in range(self.shape[0])]
+        random_directions = [[random.choice([UP, RIGHT, DOWN, LEFT]) for x in range(self.shape_x)]
+                             for y in range(self.shape_y)]
         self._policy_grid = random_directions
         return self._policy_grid
 
@@ -116,20 +96,48 @@ class Grid:
         initializes array of zero as initial evaluation grid
         :param shape:
         '''
-        self._eval_grid = [[0 for x in range(self.shape[1])] for y in range(self.shape[0])]
+        self._eval_grid = [[0 for x in range(self.shape_x)] for y in range(self.shape_y)]
         return self._eval_grid
 
-    def print(self):
+    def get_policy_str(self):
         '''
-        Converts Grid values into direction symbols and print them
+        Converts policy values into direction symbols
         '''
+
         field_string = ""
         line_old = 0
-        for line, row in itertools.product(range(self.shape[0]), range(self.shape[1])):
-            if not line_old == line:
+        for y, x in itertools.product(range(self.shape_y), range(self.shape_x)):
+            if not line_old == y:
                 field_string += "\n"
-                line_old = line
+                line_old = y
                 # uses policy values (directions) as key-value for direction symbols
-            field_string += DIRECTION_SYMBOLS[self._policy_grid[line][row]]
+
+            # If a grid field provides a symbol (every field to which or from which you can not move should do that),
+            # then that symbol is used. Otherwise, show the symbol of the direction the policy predicts
+            if self.get_grid_field(x, y).has_symbol:
+                field_string += self.get_grid_field(x, y).symbol
+            else:
+                field_string += DIRECTION_SYMBOLS[self.get_policy_field(x, y)]
             field_string += " "
-        print(field_string)
+        return field_string
+
+    def print_policy(self):
+        """
+        Prints the policy in a nice human-readable way
+        :return:
+        """
+        print(self.get_policy_str())
+
+    def get_grid_str(self):
+        """
+                :return: Returns a readable version of the grid. With x in columns, y in rows
+                """
+        out = ""
+        for line in self._grid:
+            for field in line:
+                out += f' {str(field)} '
+            out += "\n"
+        return out
+
+    def print_grid(self):
+        print(self.get_grid_str())

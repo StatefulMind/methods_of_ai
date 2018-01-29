@@ -1,13 +1,5 @@
 from abc import ABC
-
-# TODO eliminate those
-# Maybe we can solve this differently? global variables are bad practive in Python
-NOMOVE = 0
-UP = 1
-RIGHT = 2
-DOWN = 3
-LEFT = 4
-
+from Constants import NOMOVE, UP, DOWN, LEFT, RIGHT
 
 class GridField(ABC):
     """Abstract Field Class for Fields in the Grid
@@ -40,6 +32,8 @@ class GridFieldField(GridField):
     Inherits type and __str__ function
     '''
     FIELD = "F"
+
+    # Represents the probabilities in which directions you might move if you perform an action
     FIELD_PROBS = {NOMOVE: {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0},
                    UP: {NOMOVE: 0, UP: 0.8, RIGHT: 0.1, DOWN: 0, LEFT: 0.1},
                    RIGHT: {NOMOVE: 0, UP: 0.1, RIGHT: 0.8, DOWN: 0.1, LEFT: 0},
@@ -61,6 +55,10 @@ class GridFieldField(GridField):
     def has_static_evaluation_value(self):
         return False
 
+    @property
+    def has_symbol(self):
+        return False
+
 
 class GridFieldWall(GridField):
     '''
@@ -68,6 +66,8 @@ class GridFieldWall(GridField):
     '''
     WALL = 'O'
     WALL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
+
+    # Represents the probabilities in which directions you might move if you perform an action
     WALL_PROBS = {NOMOVE: WALL_PROB_ANY, UP: WALL_PROB_ANY, RIGHT: WALL_PROB_ANY, DOWN: WALL_PROB_ANY,
                   LEFT: WALL_PROB_ANY}
 
@@ -91,8 +91,16 @@ class GridFieldWall(GridField):
     def get_static_evaluation_value(self):
         return self._WALL_REWARD
 
-    def __str__(self):
+    @property
+    def has_symbol(self):
+        return True
+
+    @property
+    def symbol(self):
         return '\u220E'
+
+    def __str__(self):
+        return self.symbol
 
 
 class GridFieldPenalty(GridField):
@@ -102,6 +110,8 @@ class GridFieldPenalty(GridField):
 
     PENALTY = "P"
     PENALTY_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
+
+    # Represents the probabilities in which directions you might move if you perform an action
     PENALTY_PROBS = {NOMOVE: PENALTY_PROB_ANY, UP: PENALTY_PROB_ANY, RIGHT: PENALTY_PROB_ANY, DOWN: PENALTY_PROB_ANY,
                      LEFT: PENALTY_PROB_ANY}
 
@@ -124,8 +134,16 @@ class GridFieldPenalty(GridField):
     def get_static_evaluation_value(self):
         return self._PENALTY_REWARD
 
-    def __str__(self):
+    @property
+    def has_symbol(self):
+        return True
+
+    @property
+    def symbol(self):
         return '\u058E'
+
+    def __str__(self):
+        return self.symbol
 
 
 class GridFieldGoal(GridField):
@@ -135,6 +153,8 @@ class GridFieldGoal(GridField):
 
     GOAL = "E"
     GOAL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
+
+    # Represents the probabilities in which directions you might move if you perform an action
     GOAL_PROBS = {NOMOVE: GOAL_PROB_ANY, UP: GOAL_PROB_ANY, RIGHT: GOAL_PROB_ANY, DOWN: GOAL_PROB_ANY,
                   LEFT: GOAL_PROB_ANY}
 
@@ -154,8 +174,16 @@ class GridFieldGoal(GridField):
     def has_static_evaluation_value(self):
         return True
 
+    @property
+    def has_symbol(self):
+        return True
+
     def get_static_evaluation_value(self):
         return self._GOAL_REWARD
 
-    def __str__(self):
+    @property
+    def symbol(self):
         return '\u2302'
+
+    def __str__(self):
+        return self.symbol
