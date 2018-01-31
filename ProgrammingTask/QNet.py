@@ -13,6 +13,8 @@ class QNet:
         self._learning_rate = learning_rate
         self._epsilon = epsilon
         self._episodes = episodes
+        self._action_no = 4
+        
 
     def make_dataflowgraph(self):
         tf.reset_default_graph()
