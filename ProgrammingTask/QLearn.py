@@ -27,6 +27,17 @@ def check_running():
     return running
 
 
+def check_mode():
+    while True:
+        run_mode = int(input('Select [0] for manual run or [1] for automatic run... '))
+        if run_mode == 0 or run_mode == 1:
+            break
+        else:
+            print('Selection not in range')
+            continue
+    return run_mode
+
+
 def select_grids(grid_file=GRID_DIR):
     """displays provided directory and user chooses from files in directory
     or parsing the .grid file accordingly
@@ -52,6 +63,18 @@ def select_grids(grid_file=GRID_DIR):
         raise FileNotFoundError
     return grid_path
 
+def run_manual(grid):
+    # create policy
+    # update for one step
+    # ? account for epsilon
+    print('The policy is...')
+    grid.print_policy()
+    #Learner.step()
+    pass
+
+def run_automatic(grid):
+    pass
+
 
 def main():
     running = True
@@ -59,7 +82,12 @@ def main():
         grid = Grid(select_grids())
         print('Your .grid file:')
         grid.print_grid()
-        running = check_running()
+        run_mode = check_mode()
+        if run_mode == 0:
+            run_manual(grid)
+        elif run_mode == 1:
+            run_automatic()
+        running = check_running(grid)
 
 
 if __name__ == "__main__":
