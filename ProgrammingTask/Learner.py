@@ -2,6 +2,7 @@ from itertools import product
 import numpy as np
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 
+
 class Learner:
     '''
     Learner generated policy and improves on it
@@ -19,6 +20,8 @@ class Learner:
 
     def improve_policy(self):
         pass
+
+    # use np.random.uniform < self._epsilon_soft for selection of move
 
     def check_convergence(self, old_step, new_step, convergence_value=0.05):
         difference = 0
