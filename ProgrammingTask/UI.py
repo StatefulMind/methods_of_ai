@@ -69,8 +69,8 @@ def select_start():
 
 def select_epsilon():
     while True:
-        epsilon = int(input("Select a value for the {epsilon} between 0..1"
-                            "where 0 --> greedy run and 1 --> random run ".format(epsilon='u\0395')))
+        epsilon = float(input("Select a value for the {epsilon} between 0..1 \n"
+                            "where 0 --> greedy run and 1 --> random run... ".format(epsilon='\u03B5')))
         if 0 <= epsilon <= 1:
             break
         else:
