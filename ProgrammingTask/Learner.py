@@ -13,19 +13,20 @@ class Learner:
     def __init__(self, grid, position='static', learning_rate=0.04, reward_decay=0.4,
                  epsilon_soft=0.4):
         self._grid = grid
-        self._pos = self.start_position(position)
+        self._position_flag = position
+        self._pos = self.start_position()
         self._learning_rate = learning_rate
         self._gamma = reward_decay
         # already calculate the epsilon value
         self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
         self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
 
-    def start_position(self, position):
-        if position == 'static':
+    def start_position(self):
+        if self._position_flag == 'static':
             print('Start Position is (0,0)')
             # starting point is left corner - x coordinate corresponds to 0 and max y
             return 0, self._grid.shape_y - 1
-        if position == 'random':
+        if self._position_flag == 'random':
             # pull random position
             random_pos = self.random_start()
             # as long as it is not a field repeat
@@ -36,10 +37,11 @@ class Learner:
     def random_start(self):
         return np.random.randint(self._grid.shape_x), np.random.randint(self._grid.shape_y)
 
-
-
-
     def learn(self, iterations, convergence=None):
+        # when starting randomly pick for each new run a new starting position
+        if self._position_flag == 'random':
+            self._pos = self.start_position()
+
         for _ in range(iterations):
             print('Position is {}'.format(self._pos))
             x = self._pos[0]
