@@ -66,9 +66,9 @@ class Learner:
 
             value = self._q_table[x, y]
             q_table_next = self._q_table
-            # action by movement probability
-            relevant_action_probabilities = sorted(action.items(), key=lambda x: x[1],
-                                           reverse=True)[:3]
+            # action by movement probability, sort directions by their probabilities
+            relevant_action_probabilities = sorted(action.items(), key=lambda val: val[1],
+                                                   reverse=True)[:3]
             decided_action = choose_action(relevant_action_probabilities)
 
             # go into direction
@@ -87,10 +87,10 @@ class Learner:
             # return value when next field terminal
                 target_value = next_field.get_static_evaluation_value()
             else:
-                target_value = self._q_table[x_next, y_next] * self._gamma
+                target_value = self._q_table[y_next, x_next] * self._gamma
                 ### ToDo
             # now change state according to action
-            q_table_next[x_next, y_next] += self._learning_rate * (target_value - value)
+            q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
 
             # check for convergence - difference of value arrays
             if convergence and self.check_convergence(self._q_table,
@@ -105,9 +105,9 @@ class Learner:
         #self._grid.set_eval_grid(new_array)
 
     def check_convergence(self, old_step, new_step, convergence_value=0.05):
-        difference = 0
-        for x, y in product(range(0, self._grid.shape_x), range(0, self._grid.shape_y)):
-            difference = abs(old_step[y][x] - new_step[y][x])
+        '''takes q_tables as numpy array and takes difference, sums up the difference of
+        all values and compares it to the convergence value'''
+        difference = np.sum(old_step - new_step)
         return difference < convergence_value
 
 
