@@ -50,29 +50,32 @@ class Learner:
             # selection of next state via the epsilon-soft policy
             if np.random.uniform() < self._epsilon_soft:
             # do (all possible) policy actions while checking if state exists
-                movement = field.get_movement_probs()[policy_of_field]
+                action = field.get_movement_probs()[policy_of_field]
             else:
                 # go explore
                 direction = np.random.choice(DIRECTIONS)
-                movement = field.get_movement_probs()[direction]
+                action = field.get_movement_probs()[direction]
 
             print('movement greedy selected')
-            print(movement)
+            print(action)
             print('qTable')
             print(self._q_table)
 
             next_reward = 0
-            for direction, probability in movement.items():
+            for direction, probability in action.items():
                 # go into direction
                 x_next, y_next = np.add([x, y], DIRECTIONS_D[direction])
-                possible_next_field = self._grid.get_grid_field(x_next, y_next)
                 # check if out of bounds
                 if is_out_of_bounds(x_next, y_next, self._grid.shape):
                     x_next, y_next = [x, y]
-                elif not possible_next_field.can_move_here:
+                possible_next_field = self._grid.get_grid_field(x_next, y_next)
+                # check if wall
+                if not possible_next_field.can_move_here:
                     x_next, y_next = [x, y]
+                # fully confirmed field
+                next_field = self._grid.get_grid_field(x_next, y_next)
                 #next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
-                if possible_next_field.type == 'P' or possible_next_field.type == 'E': pass
+                if next_field.type == 'P' or next_field.type == 'E': pass
                 # return value when next field terminal
                     #new_array[x_next][y_next] = possible_next_field.get_static_evaluation_value()
                 else: pass
