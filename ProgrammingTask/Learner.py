@@ -14,7 +14,8 @@ class Learner:
         self._pos = self.start_position(position)
         self._learning_rate = learning_rate
         self._gamma = reward_decay
-        self._epsilon_soft = epsilon_soft
+        # already calculate the epsilon value
+        self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
 
     def start_position(self, position):
         if position == 'static':
@@ -34,8 +35,8 @@ class Learner:
     def random_start(self):
         return np.random.randint(self._grid.shape_x), np.random.randint(self._grid.shape_y)
 
-    def learn(self, iterations,  convergence = None):
-        for _ in range(iterations)
+    def learn(self, iterations, convergence=None):
+        for _ in range(iterations):
             x = self._pos[0]
             y = self._pos[1]
             field = self._grid.get_grid_field(x, y)
@@ -45,9 +46,17 @@ class Learner:
             # array in the same shape for adding values later
             new_array = [[0 for _ in range(self._grid.shape_x)] for _ in range(self._grid.shape_y)]
 
+            # selection of next state via the epsilon-soft policy
+            if np.random.uniform() < self.epsilon:
             # do (all possible) policy actions while checking if state exists
-            movement = field.get_movement_probs()[policy_of_field]
-
+                movement = field.get_movement_probs()[policy_of_field]
+                # go greedy
+                # max(do_movement)
+            else:
+                # go explore
+                direction = np.random.choice(DIRECTIONS)
+                movement = field.get_movement_probs()[direction]
+                
             next_reward = 0
             for direction, probability in movement.items():
                 # go into direction
@@ -61,9 +70,10 @@ class Learner:
                 next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
                 if possible_next_field.type == 'P' or possible_next_field.type == 'E':
                     # return value when next field terminal
-                    new_array[x_next][y_next] = possible_next_field.get_static_evaluation_value
+                    new_array[x_next][y_next] = possible_next_field.get_static_evaluation_value()
                 else:
-                    new_array[x_next][y_next] -= self.learning_rate * self._gamma
+                    new_array[x_next][y_next] -= (possible_next_field.get_static_evaluation_value()
+                                                  * self._gamma * #Q_table max value)
                     ### ToDo
 
 
