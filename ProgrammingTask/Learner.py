@@ -57,7 +57,7 @@ class Learner:
                 action = field.get_movement_probs()[policy_of_field]
                 a = np.argmax(self._q_table)
             else:
-                # go explore
+                # go explore randomly
                 direction = np.random.choice(DIRECTIONS)
                 action = field.get_movement_probs()[direction]
 
@@ -95,20 +95,42 @@ class Learner:
             q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
 
             # check for convergence - difference of value arrays
-            if convergence and self.check_convergence(self._q_table,
-                                                      q_table_next,
-                                                      convergence_value=convergence):
+            if convergence and check_convergence(self._q_table,
+                                                 q_table_next,
+                                                 convergence_value=convergence):
                 print('convergence value reached...')
                 break
-
+            # round values
+            q_table_next = np.round(q_table_next, decimals=2
+                                    )
+            # update the state after the applied action
             self._pos = x_next, y_next
             self._q_table = q_table_next
+            # update the policy so that the next greedy pick is optimal
+            self._grid.set_policy_field(self._pos, self.max_direction())
             sleep(2)
-        #self._grid.set_eval_grid(new_array)
 
-    def check_convergence(self, old_step, new_step, convergence_value=0.05):
-        '''takes q_tables as numpy array and takes difference, sums up the difference of
-        all values and compares it to the convergence value'''
+    def max_direction(self):
+        """evaluate the best next position from current position
+        iterate over all possible directions and
+        choose max for best policy"""
+        # sum for all possible directions and
+        nearest_values = []
+        for direction in DIRECTIONS[1:4]:
+            # get value from the direction you're going
+            iter_pos = np.add([self._pos[0], self.pos[1]], DIRECTIONS_D[direction])
+            try:
+                value = self._q_table[iter_pos]
+            except IndexError:
+                continue
+            nearest_values.append((direction, value))
+        # return the direction from the corresponding max value
+        return max(nearest_values, key=lambda x: x[1])[0]
+
+
+def check_convergence(old_step, new_step, convergence_value=0.05):
+        """takes q_tables as numpy array and takes difference, sums up the difference of
+        all values and compares it to the convergence value"""
         difference = np.sum(old_step - new_step)
         return difference < convergence_value
 
