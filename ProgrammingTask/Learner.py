@@ -17,7 +17,7 @@ class Learner:
         self._gamma = reward_decay
         # already calculate the epsilon value
         self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
-        self._q_table = pd.DataFrame(columns=DIRECTIONS)
+        self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
 
     def start_position(self, position):
         if position == 'static':
@@ -43,9 +43,6 @@ class Learner:
             policy_of_field = self._grid.get_policy_field(x, y)
             print(field)
             print(policy_of_field)
-            # array in the same shape for adding values later
-            # currently replaced by q_table
-            # new_array = [[0 for _ in range(self._grid.shape_x)] for _ in range(self._grid.shape_y)]
 
             # selection of next state via the epsilon-soft policy
             if np.random.uniform() < self._epsilon_soft:
@@ -72,16 +69,18 @@ class Learner:
                 # check if wall
                 if not possible_next_field.can_move_here:
                     x_next, y_next = [x, y]
-                # fully confirmed field
+                # now we have a fully confirmed field
                 next_field = self._grid.get_grid_field(x_next, y_next)
+                reward = next_field.get_static_evaluation_value()
                 #next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
-                if next_field.type == 'P' or next_field.type == 'E': pass
+                if next_field.type == 'P' or next_field.type == 'E':
                 # return value when next field terminal
-                    #new_array[x_next][y_next] = possible_next_field.get_static_evaluation_value()
-                else: pass
-                    #new_array[x_next][y_next] -= (possible_next_field.get_static_evaluation_value()
-                    #                              * self._gamma * #Q_table max value)
+                    self._q_table[x_next, y_next] = reward
+                else:
+                    self._q_table[x_next, y_next] += self._q_table[x_next, y_next] * self._gamma # * Q_table max value)
                     ### ToDo
+                # now change state according to action
+                self._pos = x_next, y_next
 
             # check for convergence - difference of value arrays
             #if not convergence is None and self.check_convergence(prev_array, new_array,
