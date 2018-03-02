@@ -92,10 +92,10 @@ class Learner:
                 # return value when next field terminal
                 target_value = next_field.get_static_evaluation_value()
             else:
-                target_value = self._q_table[y_next, x_next] - self._gamma
+                target_value = self._q_table[x_next, y_next] - self._gamma
                 # ToDo
             # now change state according to action
-            q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
+            q_table_next[x_next, y_next] += self._learning_rate * (target_value - value)
 
             # check for convergence - difference of value arrays
             if convergence and check_convergence(self._q_table,
@@ -104,13 +104,13 @@ class Learner:
                 print('convergence value reached...')
                 break
             # round values
-            q_table_next = np.round(q_table_next, decimals=2
-                                    )
+            q_table_next = np.round(q_table_next, decimals=2)
+            # update the policy so that the next greedy pick is optimal
+            self._grid.set_policy_field(x, y, self.max_direction())
+
             # update the state after the applied action
             self._pos = x_next, y_next
             self._q_table = q_table_next
-            # update the policy so that the next greedy pick is optimal
-            self._grid.set_policy_field(self._pos, self.max_direction())
             sleep(2)
 
             print('Policy now...')
@@ -124,9 +124,9 @@ class Learner:
         nearest_values = []
         for direction in DIRECTIONS[1:4]:
             # get value from the direction you're going
-            iter_pos = np.add([self._pos[0], self._pos[1]], DIRECTIONS_D[direction])
+            iter_x, iter_y = np.add([self._pos[0], self._pos[1]], DIRECTIONS_D[direction])
             try:
-                value = self._q_table[iter_pos]
+                value = self._q_table[iter_y][iter_x]
             except IndexError:
                 continue
             nearest_values.append((direction, value))
