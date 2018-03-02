@@ -37,6 +37,7 @@ class Learner:
 
     def learn(self, iterations, convergence=None):
         for _ in range(iterations):
+            print('Position is {}'.format(self._pos))
             x = self._pos[0]
             y = self._pos[1]
             field = self._grid.get_grid_field(x, y)
@@ -48,6 +49,7 @@ class Learner:
             if np.random.uniform() < self._epsilon_soft:
             # do (all possible) policy actions while checking if state exists
                 action = field.get_movement_probs()[policy_of_field]
+                a = np.argmax(self._q_table)
             else:
                 # go explore
                 direction = np.random.choice(DIRECTIONS)
@@ -58,7 +60,8 @@ class Learner:
             print('qTable')
             print(self._q_table)
 
-            next_reward = 0
+            value = self._q_table[x, y]
+            q_table_next = self._q_table
             for direction, probability in action.items():
                 # go into direction
                 x_next, y_next = np.add([x, y], DIRECTIONS_D[direction])
@@ -71,28 +74,27 @@ class Learner:
                     x_next, y_next = [x, y]
                 # now we have a fully confirmed field
                 next_field = self._grid.get_grid_field(x_next, y_next)
-                reward = next_field.get_static_evaluation_value()
                 #next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
                 if next_field.type == 'P' or next_field.type == 'E':
                 # return value when next field terminal
-                    self._q_table[x_next, y_next] = reward
+                    target_value = next_field.get_static_evaluation_value()
                 else:
-                    self._q_table[x_next, y_next] += self._q_table[x_next, y_next] * self._gamma # * Q_table max value)
+                    target_value = self._q_table[x_next, y_next] * self._gamma
                     ### ToDo
                 # now change state according to action
-                self._pos = x_next, y_next
+                q_table_next[x_next, y_next] += self._learning_rate * (target_value - value)
 
             # check for convergence - difference of value arrays
-            #if not convergence is None and self.check_convergence(prev_array, new_array,
-            #                                                      convergence_value=convergence):
-            #    print('convergence value reached...')
-            #    break
+            if convergence and self.check_convergence(self._q_table,
+                                                      q_table_next,
+                                                      convergence_value=convergence):
+                print('convergence value reached...')
+                break
 
-            #prev_array = new_array
+            self._pos = x_next, y_next
+            self._q_table = q_table_next
+
         #self._grid.set_eval_grid(new_array)
-
-
-        print(field.get_movement_probs()[policy_of_field])
 
     def check_convergence(self, old_step, new_step, convergence_value=0.05):
         difference = 0
