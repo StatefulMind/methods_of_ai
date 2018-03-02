@@ -92,10 +92,10 @@ class Learner:
                 # return value when next field terminal
                 target_value = next_field.get_static_evaluation_value()
             else:
-                target_value = self._q_table[x_next, y_next] - self._gamma
+                target_value = self._q_table[y_next, x_next] - self._gamma
                 # ToDo
             # now change state according to action
-            q_table_next[x_next, y_next] += self._learning_rate * (target_value - value)
+            q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
 
             # check for convergence - difference of value arrays
             if convergence and check_convergence(self._q_table,
