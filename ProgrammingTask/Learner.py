@@ -1,5 +1,6 @@
 from itertools import product
 import numpy as np
+from time import sleep
 import pandas as pd
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 
@@ -35,6 +36,9 @@ class Learner:
     def random_start(self):
         return np.random.randint(self._grid.shape_x), np.random.randint(self._grid.shape_y)
 
+
+
+
     def learn(self, iterations, convergence=None):
         for _ in range(iterations):
             print('Position is {}'.format(self._pos))
@@ -62,27 +66,31 @@ class Learner:
 
             value = self._q_table[x, y]
             q_table_next = self._q_table
-            for direction, probability in action.items():
-                # go into direction
-                x_next, y_next = np.add([x, y], DIRECTIONS_D[direction])
-                # check if out of bounds
-                if is_out_of_bounds(x_next, y_next, self._grid.shape):
-                    x_next, y_next = [x, y]
-                possible_next_field = self._grid.get_grid_field(x_next, y_next)
-                # check if wall
-                if not possible_next_field.can_move_here:
-                    x_next, y_next = [x, y]
-                # now we have a fully confirmed field
-                next_field = self._grid.get_grid_field(x_next, y_next)
-                #next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
-                if next_field.type == 'P' or next_field.type == 'E':
-                # return value when next field terminal
-                    target_value = next_field.get_static_evaluation_value()
-                else:
-                    target_value = self._q_table[x_next, y_next] * self._gamma
-                    ### ToDo
-                # now change state according to action
-                q_table_next[x_next, y_next] += self._learning_rate * (target_value - value)
+            # action by movement probability
+            relevant_action_probabilities = sorted(action.items(), key=lambda x: x[1],
+                                           reverse=True)[:3]
+            decided_action = choose_action(relevant_action_probabilities)
+
+            # go into direction
+            x_next, y_next = np.add([x, y], DIRECTIONS_D[decided_action])
+            # check if out of bounds
+            if is_out_of_bounds(x_next, y_next, self._grid.shape):
+                x_next, y_next = [x, y]
+            possible_next_field = self._grid.get_grid_field(x_next, y_next)
+            # check if wall
+            if not possible_next_field.can_move_here:
+                x_next, y_next = [x, y]
+            # now we have a fully confirmed field
+            next_field = self._grid.get_grid_field(x_next, y_next)
+
+            if next_field.type == 'P' or next_field.type == 'E':
+            # return value when next field terminal
+                target_value = next_field.get_static_evaluation_value()
+            else:
+                target_value = self._q_table[x_next, y_next] * self._gamma
+                ### ToDo
+            # now change state according to action
+            q_table_next[x_next, y_next] += self._learning_rate * (target_value - value)
 
             # check for convergence - difference of value arrays
             if convergence and self.check_convergence(self._q_table,
@@ -93,7 +101,7 @@ class Learner:
 
             self._pos = x_next, y_next
             self._q_table = q_table_next
-
+            sleep(2)
         #self._grid.set_eval_grid(new_array)
 
     def check_convergence(self, old_step, new_step, convergence_value=0.05):
@@ -104,4 +112,14 @@ class Learner:
 
 
 def is_out_of_bounds(x, y, shape):
-    return x < 0 or y < 0 or x >= shape[0] or y >= shape[1] 
+    return x < 0 or y < 0 or x >= shape[0] or y >= shape[1]
+
+
+def choose_action(value_list):
+    random_value = np.random.uniform()
+    if random_value < 0.8:
+        return value_list[0][0]
+    elif random_value < 0.9:
+        return value_list[1][0]
+    else:
+        return value_list[2][0]

@@ -96,7 +96,7 @@ def main():
         print('Initial generated policy')
         grid.print_policy()
         learner = Learner(grid=grid, position=starting_point)
-        learner.learn(iterations=3)
+        learner.learn(iterations=25)
         running = check_running()
 
 
