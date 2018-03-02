@@ -1,7 +1,7 @@
 import argparse
 import os
 from Grid import Grid
-from Evaluator import Evaluator
+from Learner import Learner
 
 GRID_DIR = './grids'
 parser = argparse.ArgumentParser(prog='QLearn',
@@ -63,14 +63,23 @@ def select_grids(grid_file=GRID_DIR):
         raise FileNotFoundError
     return grid_path
 
+
+def select_start():
+    while True:
+        run_mode = int(input("Select [0] for 'static' start at [0,0] or "
+                             "[1] for 'random' starting points... "))
+        if run_mode == 0 or run_mode == 1:
+            run_mode = 'static' if run_mode == 0 else 'random'
+            break
+        else:
+            print('Selection not in range')
+            continue
+    return run_mode
+
+
 def run_manual(grid):
-    # create policy
-    # update for one step
-    # ? account for epsilon
-    print('The policy is...')
-    grid.print_policy()
-    #Learner.step()
     pass
+
 
 def run_automatic(grid):
     pass
@@ -82,12 +91,13 @@ def main():
         grid = Grid(select_grids())
         print('Your .grid file:')
         grid.print_grid()
-        run_mode = check_mode()
-        if run_mode == 0:
-            run_manual(grid)
-        elif run_mode == 1:
-            run_automatic()
-        running = check_running(grid)
+        # run_mode = check_mode()
+        starting_point = select_start()
+        print('Initial generated policy')
+        grid.print_policy()
+        learner = Learner(grid=grid, position=starting_point)
+        learner.learn(iterations=3)
+        running = check_running()
 
 
 if __name__ == "__main__":

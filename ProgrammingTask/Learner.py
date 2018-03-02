@@ -1,5 +1,6 @@
 from itertools import product
 import numpy as np
+import pandas as pd
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 
 
@@ -16,6 +17,7 @@ class Learner:
         self._gamma = reward_decay
         # already calculate the epsilon value
         self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
+        self._q_table = pd.DataFrame(columns=DIRECTIONS)
 
     def start_position(self, position):
         if position == 'static':
@@ -28,8 +30,6 @@ class Learner:
             # as long as it is not a field repeat
             while not self._grid.get_grid_field(random_pos[0], random_pos[1]).type == 'F':
                 random_pos = self.random_start()
-            #print('Start Position is {} - randomly generated'.format(random_pos))
-            # maybe dont print start position - they are inverse to display but are valid
             return random_pos
 
     def random_start(self):
@@ -44,19 +44,23 @@ class Learner:
             print(field)
             print(policy_of_field)
             # array in the same shape for adding values later
-            new_array = [[0 for _ in range(self._grid.shape_x)] for _ in range(self._grid.shape_y)]
+            # currently replaced by q_table
+            # new_array = [[0 for _ in range(self._grid.shape_x)] for _ in range(self._grid.shape_y)]
 
             # selection of next state via the epsilon-soft policy
-            if np.random.uniform() < self.epsilon:
+            if np.random.uniform() < self._epsilon_soft:
             # do (all possible) policy actions while checking if state exists
                 movement = field.get_movement_probs()[policy_of_field]
-                # go greedy
-                # max(do_movement)
             else:
                 # go explore
                 direction = np.random.choice(DIRECTIONS)
                 movement = field.get_movement_probs()[direction]
-                
+
+            print('movement greedy selected')
+            print(movement)
+            print('qTable')
+            print(self._q_table)
+
             next_reward = 0
             for direction, probability in movement.items():
                 # go into direction
@@ -67,38 +71,26 @@ class Learner:
                     x_next, y_next = [x, y]
                 elif not possible_next_field.can_move_here:
                     x_next, y_next = [x, y]
-                next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
-                if possible_next_field.type == 'P' or possible_next_field.type == 'E':
-                    # return value when next field terminal
-                    new_array[x_next][y_next] = possible_next_field.get_static_evaluation_value()
-                else:
-                    new_array[x_next][y_next] -= (possible_next_field.get_static_evaluation_value()
-                                                  * self._gamma * #Q_table max value)
+                #next_reward += probability * prev_array[x_next][y_next]# next array state or previous array state
+                if possible_next_field.type == 'P' or possible_next_field.type == 'E': pass
+                # return value when next field terminal
+                    #new_array[x_next][y_next] = possible_next_field.get_static_evaluation_value()
+                else: pass
+                    #new_array[x_next][y_next] -= (possible_next_field.get_static_evaluation_value()
+                    #                              * self._gamma * #Q_table max value)
                     ### ToDo
 
-
-
-
             # check for convergence - difference of value arrays
-            if not convergence is None and self.check_convergence(prev_array, new_array,
-                                                                  convergence_value=convergence):
-                print('convergence value reached...')
-                break
+            #if not convergence is None and self.check_convergence(prev_array, new_array,
+            #                                                      convergence_value=convergence):
+            #    print('convergence value reached...')
+            #    break
 
-            prev_array = new_array
-        self._grid.set_eval_grid(new_array)
+            #prev_array = new_array
+        #self._grid.set_eval_grid(new_array)
 
 
-        print(field_field.get_movement_probs()[policy_of_field])
-
-    # action corresponds to MOVEMENT > FROM MOVEMENT_D by policy
-    def apply_epsilon(self, action):
-        return np.random.uniform(#SOMETHING) # choose with epsilon soft policy from possible movements
-
-    def improve_policy(self):
-        pass
-
-    # use np.random.uniform < self._epsilon_soft for selection of move
+        print(field.get_movement_probs()[policy_of_field])
 
     def check_convergence(self, old_step, new_step, convergence_value=0.05):
         difference = 0
