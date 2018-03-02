@@ -118,7 +118,7 @@ class Learner:
         nearest_values = []
         for direction in DIRECTIONS[1:4]:
             # get value from the direction you're going
-            iter_pos = np.add([self._pos[0], self.pos[1]], DIRECTIONS_D[direction])
+            iter_pos = np.add([self._pos[0], self._pos[1]], DIRECTIONS_D[direction])
             try:
                 value = self._q_table[iter_pos]
             except IndexError:
