@@ -51,14 +51,17 @@ class Learner:
             print(field)
             print(policy_of_field)
 
+            # clone DIRECTIONS array to not have side effects
+            direction_copy = DIRECTIONS[:]
             # selection of next state via the epsilon-soft policy
             if np.random.uniform() < self._epsilon_soft:
-            # do (all possible) policy actions while checking if state exists
+                # policy of field corresponds with the greedy action (after 1st iteration)
                 action = field.get_movement_probs()[policy_of_field]
-                a = np.argmax(self._q_table)
             else:
-                # go explore randomly
-                direction = np.random.choice(DIRECTIONS)
+                # go explore randomly in all other directions
+                # first remove the greedy direction
+                direction_copy.remove(policy_of_field)
+                direction = np.random.choice(direction_copy)
                 action = field.get_movement_probs()[direction]
 
             print('movement greedy selected')
@@ -86,11 +89,11 @@ class Learner:
             next_field = self._grid.get_grid_field(x_next, y_next)
 
             if next_field.type == 'P' or next_field.type == 'E':
-            # return value when next field terminal
+                # return value when next field terminal
                 target_value = next_field.get_static_evaluation_value()
             else:
                 target_value = self._q_table[y_next, x_next] - self._gamma
-                ### ToDo
+                # ToDo
             # now change state according to action
             q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
 
@@ -110,6 +113,9 @@ class Learner:
             self._grid.set_policy_field(self._pos, self.max_direction())
             sleep(2)
 
+            print('Policy now...')
+            print(self._grid.get_policy_grid())
+
     def max_direction(self):
         """evaluate the best next position from current position
         iterate over all possible directions and
@@ -125,7 +131,8 @@ class Learner:
                 continue
             nearest_values.append((direction, value))
         # return the direction from the corresponding max value
-        return max(nearest_values, key=lambda x: x[1])[0]
+        max_direction = max(nearest_values, key=lambda x: x[1])[0]
+        return max_direction
 
 
 def check_convergence(old_step, new_step, convergence_value=0.05):
