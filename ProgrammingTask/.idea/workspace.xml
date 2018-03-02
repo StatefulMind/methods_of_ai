@@ -28,8 +28,8 @@
       <file leaf-file-name="Learner.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Learner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="963">
-              <caret line="108" column="59" lean-forward="false" selection-start-line="108" selection-start-column="59" selection-end-line="108" selection-end-column="59" />
+            <state relative-caret-position="884">
+              <caret line="106" column="51" lean-forward="false" selection-start-line="106" selection-start-column="51" selection-end-line="106" selection-end-column="51" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -208,7 +208,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519995828198</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update convergence check according to numpy tables">
+      <created>1519999527282</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1519999527282</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -259,7 +266,8 @@
     <MESSAGE value="Q table as np array, get reward when done, step through by _pos assignment" />
     <MESSAGE value="added convergence check on two states of q_tables, added update of q_tables" />
     <MESSAGE value="added move into chosen direction by function that returns according to probability value" />
-    <option name="LAST_COMMIT_MESSAGE" value="added move into chosen direction by function that returns according to probability value" />
+    <MESSAGE value="update convergence check according to numpy tables" />
+    <option name="LAST_COMMIT_MESSAGE" value="update convergence check according to numpy tables" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -381,8 +389,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Learner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="963">
-          <caret line="108" column="59" lean-forward="false" selection-start-line="108" selection-start-column="59" selection-end-line="108" selection-end-column="59" />
+        <state relative-caret-position="884">
+          <caret line="106" column="51" lean-forward="false" selection-start-line="106" selection-start-column="51" selection-end-line="106" selection-end-column="51" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
