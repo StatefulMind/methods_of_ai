@@ -10,7 +10,7 @@ class Learner:
     Learner generated policy and improves on it
     '''
 
-    def __init__(self, grid, position='static', learning_rate=0.04, gamma=0.9,
+    def __init__(self, grid, position='static', learning_rate=0.5, gamma=0.9,
                  reward_decay=0.04, epsilon_soft=0.4):
         self._grid = grid
         self._position_flag = position
@@ -188,10 +188,9 @@ class Learner:
                     target_value = next_field.get_static_evaluation_value()
                     is_terminal = True
                 else:
-                    target_value = q_table[y_next, x_next] - self._gamma
-                    # ToDo
+                    target_value = q_table[y_next, x_next] - self._reward_decay
                 # now change state according to action
-                q_table_next[y, x] = self._learning_rate * (target_value - value)
+                q_table.ix[self._pos, direction] += self._learning_rate * (target_value - value)
 
                 # check for convergence - difference of value arrays
                 if convergence and check_convergence(self._q_table,
