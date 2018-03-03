@@ -20,7 +20,8 @@ class Learner:
         self._reward_decay = reward_decay
         # already calculate the epsilon value
         self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
-        self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
+        #self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
+        self._q_table = self.init_q_table()
 
     def start_position(self):
         if self._position_flag == 'static':
@@ -126,7 +127,7 @@ class Learner:
 
     def learn(self, episodes=3, iterations=20, convergence=0.1):
         # when starting randomly pick for each new run a new starting position
-        for e in range(self._episodes):
+        for _e in range(episodes):
             self._pos = self.start_position()
 
             for _ in range(iterations):
@@ -159,13 +160,12 @@ class Learner:
                 print('Direction {}'.format(direction))
                 print(action_probs)
 
-                states = [i for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
-                q_table = pd.DataFrame(0, index=states, columns=DIRECTIONS[1:])
-                print('q-Table')
-                print(q_table)
 
-                value = q_table[self._pos, direction]
-                q_table_next = q_table
+                print('q-Table')
+                print(self._q_table)
+
+                value = self._q_table[self._pos, direction]
+                q_table_next = self._q_table
                 # action by movement probability, sort directions by their probabilities
                 relevant_action_probabilities = sorted(action_probs.items(), key=lambda val: val[1],
                                                        reverse=True)[:3]
@@ -187,7 +187,8 @@ class Learner:
                     target_value = next_field.get_static_evaluation_value()
                     is_terminal = True
                 else:
-                    target_value = self._gamma * q_table.ix[(y_next, x_next)] - self._reward_decay
+                    # new reward value taken from q table and actual taken action after uncertainty calculations
+                    target_value = self._gamma * q_table.ix[(y, x), make_action] - self._reward_decay
                 # now change state according to action
                 q_table_next.ix[self._pos, direction] += self._learning_rate * (target_value - value)
 
@@ -200,10 +201,13 @@ class Learner:
 
                 # update the policy so that the next greedy pick is optimal
                 # self._grid.set_policy_field(x, y, self.max_direction())
-                # new policy is direction that corresponds with max value
+                # update policy in direction with max value from original position in q_table
+                maximizing_direction = q_table_next.ix[self._pos, :].max().index[0]
+                self._grid.set_policy_field(x, y, maximizing_direction)
 
                 # update the state after the applied action
                 self._pos = x_next, y_next
+                q_table = q_table_next
                 sleep(2)
 
                 if is_terminal:
@@ -230,6 +234,10 @@ class Learner:
         max_direction = max(nearest_values, key=lambda x: x[1])[0]
         return max_direction
 
+    def init_q_table(self):
+        states = [i for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
+        return pd.DataFrame(0, index=states, columns=DIRECTIONS[1:])
+
 
 def check_convergence(old_step, new_step, convergence_value=0.05):
         """takes difference of old q_table and new q_table, takes absolute value
@@ -250,3 +258,6 @@ def choose_action(value_list):
         return value_list[1][0]
     else:
         return value_list[2][0]
+
+
+
