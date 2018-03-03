@@ -1,9 +1,43 @@
-import os
+try:
+    import os
+    import numpy as np
+    import itertools
+    import argparse
+    import sys
+    from time import sleep
+except ImportError as e:
+    print('An Exception occurred in while importing modules !')
+    print(e)
 
 GRID_DIR = './grids'
 
 
+def check_version():
+    """Checks if dependencies are met and imported packages have the right version
+    exits script if requirements are not met"""
+    py_check = False
+    numpy_check = False
+    python_version = sys.version_info
+    if python_version[0] < 3 and python_version[1] < 6 and python_version[2] < 4:
+        py_check = True
+        invalid = 'python'
+    numpy_version = int(('').join(np.__version__.split('.')))
+    if numpy_version < 1133:
+        numpy_check = True
+        invalid = 'numpy'
+    if py_check or numpy_check:
+        print('Looks like you are not running the required {invalid} version !'
+              '------------------------------------------------------------'
+              'Please refer to the README and check the dependencies...'.format(invalid=invalid))
+        sleep(1)
+        print('EXITING NOW.')
+        sys.exit(1)
+
+
 def check_running():
+    """Checks if the user wants to continue running the program
+    if user enters n/N/No/NO False will be returned that leads to termination of script
+    :returns running boolean:"""
     while True:
         user_in = input('Continue? [y/n] ')
         if user_in == 'y' or user_in == 'Y' or user_in == 'Yes' or user_in == 'YES':
