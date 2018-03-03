@@ -115,7 +115,7 @@ def select_epsilon():
 
 def select_episodes():
     while True:
-        episodes = float(input("Enter number of how many episodes to run... "))
+        episodes = int(input("Enter number of how many episodes to run... "))
         if episodes > 0:
             break
         else:
