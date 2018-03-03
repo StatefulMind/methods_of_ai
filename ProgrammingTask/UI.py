@@ -135,6 +135,22 @@ def select_iterations():
     return iterations
 
 
+def select_convergence():
+    while True:
+        convergence = float(input("Enter a convergence value... \n"
+                                  "-----------------------------\n"
+                                  "HELP: \n"
+                                  "The absolute difference of the values from the "
+                                  "generated q-tables, leading to termination if "
+                                  "this value is satisfied"))
+        if 0 <= convergence <= 20:
+            break
+        else:
+            print('Your convergence value is either too high or too low.')
+            continue
+    return convergence
+
+
 def run_manual(grid):
     pass
 
