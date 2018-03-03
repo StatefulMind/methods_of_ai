@@ -238,7 +238,7 @@ class Learner:
 
     def init_q_table(self):
         states = [i for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
-        return pd.DataFrame(0, index=states, columns=DIRECTIONS[1:])
+        return pd.DataFrame(0, index=states, columns=DIRECTIONS)
 
 
 def check_convergence(old_step, new_step, convergence_value=0.05):
