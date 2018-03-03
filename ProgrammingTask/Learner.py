@@ -1,7 +1,6 @@
 from itertools import product
 import numpy as np
 from time import sleep
-import pandas as pd
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 
 
@@ -69,7 +68,7 @@ class Learner:
             print('qTable')
             print(self._q_table)
 
-            value = self._q_table[x, y]
+            value = self._q_table[y, x]
             q_table_next = self._q_table
             # action by movement probability, sort directions by their probabilities
             relevant_action_probabilities = sorted(action.items(), key=lambda val: val[1],
