@@ -164,7 +164,7 @@ class Learner:
                 print('q-Table')
                 print(self._q_table)
 
-                value = self._q_table[self._pos, direction]
+                value = self._q_table.ix[self._pos, direction]
                 q_table_next = self._q_table
                 # action by movement probability, sort directions by their probabilities
                 relevant_action_probabilities = sorted(action_probs.items(), key=lambda val: val[1],
@@ -188,12 +188,12 @@ class Learner:
                     is_terminal = True
                 else:
                     # new reward value taken from q table and actual taken action after uncertainty calculations
-                    target_value = self._gamma * q_table.ix[(y, x), make_action] - self._reward_decay
+                    target_value = self._gamma * self._q_table.ix[(y, x), make_action] - self._reward_decay
                 # now change state according to action
                 q_table_next.ix[self._pos, direction] += self._learning_rate * (target_value - value)
 
                 # check for convergence - difference of value arrays
-                if convergence and check_convergence(q_table,
+                if convergence and check_convergence(self._q_table,
                                                      q_table_next,
                                                      convergence_value=convergence):
                     print('convergence value reached...')
@@ -207,7 +207,7 @@ class Learner:
 
                 # update the state after the applied action
                 self._pos = x_next, y_next
-                q_table = q_table_next
+                self._q_table = q_table_next
                 sleep(2)
 
                 if is_terminal:
