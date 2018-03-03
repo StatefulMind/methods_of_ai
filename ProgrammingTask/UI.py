@@ -119,9 +119,20 @@ def select_episodes():
         if episodes > 0:
             break
         else:
-            print('Value is negative!')
+            print('Value cannot be negative!')
             continue
     return episodes
+
+
+def select_iterations():
+    while True:
+        iterations = int(input("Enter number of iterations per episode... "))
+        if iterations > 0:
+            break
+        else:
+            print('Value cannot be negative!')
+            continue
+    return iterations
 
 
 def run_manual(grid):

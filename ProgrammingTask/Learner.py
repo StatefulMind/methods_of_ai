@@ -10,14 +10,14 @@ class Learner:
     Learner generated policy and improves on it
     '''
 
-    def __init__(self, grid, position='static', learning_rate=0.04, reward_decay=0.4,
-                 epsilon_soft=0.4, episodes=10):
+    def __init__(self, grid, position='static', learning_rate=0.04, gamma=0.9,
+                 reward_decay=0.04, epsilon_soft=0.4):
         self._grid = grid
-        self._episodes = episodes
         self._position_flag = position
         self._pos = self.start_position()
         self._learning_rate = learning_rate
-        self._gamma = reward_decay
+        self._gamma = gamma
+        self._reward_decay = reward_decay
         # already calculate the epsilon value
         self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
         self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
@@ -124,7 +124,7 @@ class Learner:
     #             print('Policy now...')
     #             print(self._grid.get_policy_grid())
 
-    def learn(self, iterations, convergence=None):
+    def learn(self, episodes=3, iterations=20, convergence=None):
         # when starting randomly pick for each new run a new starting position
         for e in range(self._episodes):
             self._pos = self.start_position()
@@ -155,23 +155,24 @@ class Learner:
                     action_probs = field.get_movement_probs()[direction]
                     print('movement not greedily selected')
 
+                # use this direction for indexing the q_table
+                print('Direction {}'.format(direction))
                 print(action_probs)
-
 
                 states = [i for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
                 q_table = pd.DataFrame(0, index=states, columns=DIRECTIONS[1:])
-                print('qTable')
+                print('q-Table')
                 print(q_table)
 
-                value = self._q_table[y, x]
-                q_table_next = self._q_table
+                value = q_table[self._pos, direction]
+                q_table_next = q_table
                 # action by movement probability, sort directions by their probabilities
                 relevant_action_probabilities = sorted(action_probs.items(), key=lambda val: val[1],
                                                        reverse=True)[:3]
-                decided_action = choose_action(relevant_action_probabilities)
+                make_action = choose_action(relevant_action_probabilities)
 
                 # go into direction
-                x_next, y_next = np.add([x, y], DIRECTIONS_D[decided_action])
+                x_next, y_next = np.add([x, y], DIRECTIONS_D[make_action])
                 # check if out of bounds
                 if is_out_of_bounds(x_next, y_next, self._grid.shape):
                     x_next, y_next = [x, y]
@@ -187,10 +188,10 @@ class Learner:
                     target_value = next_field.get_static_evaluation_value()
                     is_terminal = True
                 else:
-                    target_value = self._q_table[y_next, x_next] - self._gamma
+                    target_value = q_table[y_next, x_next] - self._gamma
                     # ToDo
                 # now change state according to action
-                q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
+                q_table_next[y, x] = self._learning_rate * (target_value - value)
 
                 # check for convergence - difference of value arrays
                 if convergence and check_convergence(self._q_table,
