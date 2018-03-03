@@ -127,7 +127,7 @@ class Learner:
     #             print('Policy now...')
     #             print(self._grid.get_policy_grid())
 
-    def learn(self, episodes=3, iterations=20, convergence=0.1):
+    def learn(self, episodes=3, iterations=20, convergence=0.0001):
         # when starting randomly pick for each new run a new starting position
         for _e in range(episodes):
             self._pos = self.start_position()
@@ -167,7 +167,7 @@ class Learner:
                 print(self._q_table)
 
                 value = self._q_table.ix[self._pos, direction]
-                q_table_next = self._q_table
+                q_table_next = self._q_table.copy()
                 # action by movement probability, sort directions by their probabilities
                 relevant_action_probabilities = sorted(action_probs.items(), key=lambda val: val[1],
                                                        reverse=True)[:3]
