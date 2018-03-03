@@ -124,7 +124,7 @@ class Learner:
     #             print('Policy now...')
     #             print(self._grid.get_policy_grid())
 
-    def learn(self, episodes=3, iterations=20, convergence=None):
+    def learn(self, episodes=3, iterations=20, convergence=0.1):
         # when starting randomly pick for each new run a new starting position
         for e in range(self._episodes):
             self._pos = self.start_position()
@@ -182,30 +182,28 @@ class Learner:
                     x_next, y_next = [x, y]
                 # now we have a fully confirmed field
                 next_field = self._grid.get_grid_field(x_next, y_next)
-
                 if next_field.type == 'P' or next_field.type == 'E':
                     # return value when next field terminal
                     target_value = next_field.get_static_evaluation_value()
                     is_terminal = True
                 else:
-                    target_value = q_table[y_next, x_next] - self._reward_decay
+                    target_value = self._gamma * q_table.ix[(y_next, x_next)] - self._reward_decay
                 # now change state according to action
-                q_table.ix[self._pos, direction] += self._learning_rate * (target_value - value)
+                q_table_next.ix[self._pos, direction] += self._learning_rate * (target_value - value)
 
                 # check for convergence - difference of value arrays
-                if convergence and check_convergence(self._q_table,
+                if convergence and check_convergence(q_table,
                                                      q_table_next,
                                                      convergence_value=convergence):
                     print('convergence value reached...')
                     break
-                # round values
-                q_table_next = np.round(q_table_next, decimals=2)
+
                 # update the policy so that the next greedy pick is optimal
-                self._grid.set_policy_field(x, y, self.max_direction())
+                # self._grid.set_policy_field(x, y, self.max_direction())
+                # new policy is direction that corresponds with max value
 
                 # update the state after the applied action
                 self._pos = x_next, y_next
-                self._q_table = q_table_next
                 sleep(2)
 
                 if is_terminal:
@@ -234,9 +232,9 @@ class Learner:
 
 
 def check_convergence(old_step, new_step, convergence_value=0.05):
-        """takes q_tables as numpy array and takes difference, sums up the difference of
-        all values and compares it to the convergence value"""
-        difference = np.sum(old_step - new_step)
+        """takes difference of old q_table and new q_table, takes absolute value
+        of all values and compares it to the convergence value"""
+        difference = abs(new_step.subtract(old_step).values.sum())
         return difference < convergence_value
 
 
