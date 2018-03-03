@@ -4,6 +4,8 @@ from time import sleep
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 import pandas as pd
 
+# NOMOVE breaks the q_table movement implementation
+DIRECTIONS.remove(NOMOVE)
 
 class Learner:
     '''

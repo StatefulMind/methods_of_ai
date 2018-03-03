@@ -143,7 +143,7 @@ def select_convergence():
                                   "The absolute difference of the values from the "
                                   "generated q-tables, leading to termination if "
                                   "this value is satisfied\n"
-                                  "========"
+                                  "======== \n"
                                   "... "))
         if 0 <= convergence <= 20:
             break
