@@ -10,8 +10,9 @@ class Learner:
     '''
 
     def __init__(self, grid, position='static', learning_rate=0.04, reward_decay=0.4,
-                 epsilon_soft=0.4):
+                 epsilon_soft=0.4, episodes=10):
         self._grid = grid
+        self._episodes = episodes
         self._position_flag = position
         self._pos = self.start_position()
         self._learning_rate = learning_rate
@@ -38,7 +39,7 @@ class Learner:
 
     def learn(self, iterations, convergence=None):
         # when starting randomly pick for each new run a new starting position
-        if self._position_flag == 'random':
+        for e in range(self._episodes):
             self._pos = self.start_position()
 
         for _ in range(iterations):

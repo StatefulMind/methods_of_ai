@@ -5,6 +5,7 @@ from UI import select_grids
 from UI import select_start
 from UI import check_running
 from UI import select_epsilon
+from UI import select_episodes
 
 parser = argparse.ArgumentParser(prog='QLearn',
                                  description='''Read grid-file,
@@ -25,9 +26,11 @@ def main():
         # run_mode = check_mode()
         starting_point = select_start()
         epsilon = select_epsilon()
+        episodes = select_episodes()
         print('Initial generated policy')
         grid.print_policy()
-        learner = Learner(grid=grid, position=starting_point, epsilon_soft=epsilon)
+        learner = Learner(grid=grid, position=starting_point,
+                          epsilon_soft=epsilon, episodes=episodes)
         learner.learn(iterations=25)
         running = check_running()
 

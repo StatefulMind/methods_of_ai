@@ -113,6 +113,17 @@ def select_epsilon():
     return epsilon
 
 
+def select_episodes():
+    while True:
+        episodes = float(input("Enter number of how many episodes to run... "))
+        if episodes > 0:
+            break
+        else:
+            print('Value is negative!')
+            continue
+    return episodes
+
+
 def run_manual(grid):
     pass
 
