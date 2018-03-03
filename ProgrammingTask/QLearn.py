@@ -16,10 +16,10 @@ parser.add_argument('-g', '--grid_file', help='path to input .grid file')
 args = parser.parse_args()
 
 
+
 def main():
     running = True
     while running:
-        check_running()
         grid = Grid(select_grids())
         print('Your .grid file:')
         grid.print_grid()

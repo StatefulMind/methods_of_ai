@@ -42,79 +42,86 @@ class Learner:
         for e in range(self._episodes):
             self._pos = self.start_position()
 
-        for _ in range(iterations):
-            print('Position is {}'.format(self._pos))
-            x = self._pos[0]
-            y = self._pos[1]
-            field = self._grid.get_grid_field(x, y)
-            policy_of_field = self._grid.get_policy_field(x, y)
-            print(field)
-            print(policy_of_field)
+            for _ in range(iterations):
+                is_terminal = False
+                print('Position is {}'.format(self._pos))
+                x = self._pos[0]
+                y = self._pos[1]
+                field = self._grid.get_grid_field(x, y)
+                policy_of_field = self._grid.get_policy_field(x, y)
+                print(field)
+                print(policy_of_field)
 
-            # clone DIRECTIONS array to not have side effects
-            direction_copy = DIRECTIONS[:]
-            # selection of next state via the epsilon-soft policy
-            if np.random.uniform() < self._epsilon_soft:
-                # policy of field corresponds with the greedy action (after 1st iteration)
-                action = field.get_movement_probs()[policy_of_field]
-            else:
-                # go explore randomly in all other directions
-                # first remove the greedy direction
-                direction_copy.remove(policy_of_field)
-                direction = np.random.choice(direction_copy)
-                action = field.get_movement_probs()[direction]
+                # clone DIRECTIONS array to not have side effects
+                direction_copy = DIRECTIONS[:]
+                # selection of next state via the epsilon-soft policy
+                if np.random.uniform() < self._epsilon_soft:
+                    # policy of field corresponds with the greedy action (after 1st iteration)
+                    action = field.get_movement_probs()[policy_of_field]
+                    print('movement greedily selected')
+                else:
+                    # go explore randomly in all other directions
+                    # first remove the greedy direction
+                    direction_copy.remove(policy_of_field)
+                    direction = np.random.choice(direction_copy)
+                    action = field.get_movement_probs()[direction]
+                    print('movement not greedily selected')
 
-            print('movement greedy selected')
-            print(action)
-            print('qTable')
-            print(self._q_table)
 
-            value = self._q_table[y, x]
-            q_table_next = self._q_table
-            # action by movement probability, sort directions by their probabilities
-            relevant_action_probabilities = sorted(action.items(), key=lambda val: val[1],
-                                                   reverse=True)[:3]
-            decided_action = choose_action(relevant_action_probabilities)
+                print(action)
+                print('qTable')
+                print(self._q_table)
 
-            # go into direction
-            x_next, y_next = np.add([x, y], DIRECTIONS_D[decided_action])
-            # check if out of bounds
-            if is_out_of_bounds(x_next, y_next, self._grid.shape):
-                x_next, y_next = [x, y]
-            possible_next_field = self._grid.get_grid_field(x_next, y_next)
-            # check if wall
-            if not possible_next_field.can_move_here:
-                x_next, y_next = [x, y]
-            # now we have a fully confirmed field
-            next_field = self._grid.get_grid_field(x_next, y_next)
+                value = self._q_table[y, x]
+                q_table_next = self._q_table
+                # action by movement probability, sort directions by their probabilities
+                relevant_action_probabilities = sorted(action.items(), key=lambda val: val[1],
+                                                       reverse=True)[:3]
+                decided_action = choose_action(relevant_action_probabilities)
 
-            if next_field.type == 'P' or next_field.type == 'E':
-                # return value when next field terminal
-                target_value = next_field.get_static_evaluation_value()
-            else:
-                target_value = self._q_table[y_next, x_next] - self._gamma
-                # ToDo
-            # now change state according to action
-            q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
+                # go into direction
+                x_next, y_next = np.add([x, y], DIRECTIONS_D[decided_action])
+                # check if out of bounds
+                if is_out_of_bounds(x_next, y_next, self._grid.shape):
+                    x_next, y_next = [x, y]
+                possible_next_field = self._grid.get_grid_field(x_next, y_next)
+                # check if wall
+                if not possible_next_field.can_move_here:
+                    x_next, y_next = [x, y]
+                # now we have a fully confirmed field
+                next_field = self._grid.get_grid_field(x_next, y_next)
 
-            # check for convergence - difference of value arrays
-            if convergence and check_convergence(self._q_table,
-                                                 q_table_next,
-                                                 convergence_value=convergence):
-                print('convergence value reached...')
-                break
-            # round values
-            q_table_next = np.round(q_table_next, decimals=2)
-            # update the policy so that the next greedy pick is optimal
-            self._grid.set_policy_field(x, y, self.max_direction())
+                if next_field.type == 'P' or next_field.type == 'E':
+                    # return value when next field terminal
+                    target_value = next_field.get_static_evaluation_value()
+                    is_terminal = True
+                else:
+                    target_value = self._q_table[y_next, x_next] - self._gamma
+                    # ToDo
+                # now change state according to action
+                q_table_next[y_next, x_next] += self._learning_rate * (target_value - value)
 
-            # update the state after the applied action
-            self._pos = x_next, y_next
-            self._q_table = q_table_next
-            sleep(2)
+                # check for convergence - difference of value arrays
+                if convergence and check_convergence(self._q_table,
+                                                     q_table_next,
+                                                     convergence_value=convergence):
+                    print('convergence value reached...')
+                    break
+                # round values
+                q_table_next = np.round(q_table_next, decimals=2)
+                # update the policy so that the next greedy pick is optimal
+                self._grid.set_policy_field(x, y, self.max_direction())
 
-            print('Policy now...')
-            print(self._grid.get_policy_grid())
+                # update the state after the applied action
+                self._pos = x_next, y_next
+                self._q_table = q_table_next
+                sleep(2)
+
+                if is_terminal:
+                    break
+
+                print('Policy now...')
+                print(self._grid.get_policy_grid())
 
     def max_direction(self):
         """evaluate the best next position from current position
