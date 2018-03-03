@@ -18,7 +18,7 @@ def check_version():
     py_check = False
     numpy_check = False
     python_version = sys.version_info
-    if python_version[0] < 3 and python_version[1] < 6 and python_version[2] < 4:
+    if python_version[0] != 3 or python_version[1] < 6 or python_version[2] < 4:
         py_check = True
         invalid = 'python'
     numpy_version = int(('').join(np.__version__.split('.')))
