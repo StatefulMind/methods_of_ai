@@ -25,6 +25,10 @@ class Learner:
         #self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
         self._q_table = self.init_q_table()
 
+    @property
+    def _state(self):
+        return 's({})'.format(self._pos)
+
     def start_position(self):
         if self._position_flag == 'static':
             print('Start Position is (0,0)')
@@ -127,12 +131,12 @@ class Learner:
     #             print('Policy now...')
     #             print(self._grid.get_policy_grid())
 
-    def learn(self, episodes=3, iterations=20, convergence=0.0001):
+    def learn(self, episodes=3, convergence=0.0001):
         # when starting randomly pick for each new run a new starting position
         for _e in range(episodes):
             self._pos = self.start_position()
 
-            for _ in range(iterations):
+            while True:
                 is_terminal = False
                 print('Position is {}'.format(self._pos))
                 x = self._pos[0]
@@ -166,7 +170,7 @@ class Learner:
                 print('q-Table')
                 print(self._q_table)
 
-                value = self._q_table.ix[self._pos, direction]
+                value = self._q_table.ix[self._state, direction]
                 q_table_next = self._q_table.copy()
                 # action by movement probability, sort directions by their probabilities
                 relevant_action_probabilities = sorted(action_probs.items(), key=lambda val: val[1],
@@ -190,9 +194,9 @@ class Learner:
                     is_terminal = True
                 else:
                     # new reward value taken from q table and actual taken action after uncertainty calculations
-                    target_value = self._gamma * self._q_table.ix[(y, x), make_action] - self._reward_decay
+                    target_value = self._gamma * self._q_table.ix['s({})'.format((x, y)), make_action] - self._reward_decay
                 # now change state according to action
-                q_table_next.ix[self._pos, direction] += self._learning_rate * (target_value - value)
+                q_table_next.ix[self._state, direction] += self._learning_rate * (target_value - value)
 
                 # check for convergence - difference of value arrays
                 if convergence and check_convergence(self._q_table,
@@ -204,40 +208,51 @@ class Learner:
                 # update the policy so that the next greedy pick is optimal
                 # self._grid.set_policy_field(x, y, self.max_direction())
                 # update policy in direction with max value from original position in q_table
-                maximizing_direction = q_table_next.ix[self._pos, :].max().index[0]
+                #maximizing_direction = q_table_next.ix[self._state, :].max().index[0]
+                maximizing_direction = q_table_next.loc[self._state].argmax()
+                print("Debug qtable of {}".format(self._state))
+                print(q_table_next.ix[(self._state), :])
                 self._grid.set_policy_field(x, y, maximizing_direction)
+
+                
+                print('Policy now...')
+                # print(self._grid.get_policy_grid())
+                self._grid.print_policy(pos=self._pos)
+
 
                 # update the state after the applied action
                 self._pos = x_next, y_next
                 self._q_table = q_table_next
-                sleep(2)
+                sleep(.0)
 
                 if is_terminal:
                     break
 
                 print('Policy now...')
-                print(self._grid.get_policy_grid())
+                #print(self._grid.get_policy_grid())
+                self._grid.print_policy(pos = self._pos)
 
-    def max_direction(self):
-        """evaluate the best next position from current position
-        iterate over all possible directions and
-        choose max for best policy"""
-        # sum for all possible directions and
-        nearest_values = []
-        for direction in DIRECTIONS[1:4]:
-            # get value from the direction you're going
-            iter_x, iter_y = np.add([self._pos[0], self._pos[1]], DIRECTIONS_D[direction])
-            try:
-                value = self._q_table[iter_y][iter_x]
-            except IndexError:
-                continue
-            nearest_values.append((direction, value))
-        # return the direction from the corresponding max value
-        max_direction = max(nearest_values, key=lambda x: x[1])[0]
-        return max_direction
+    #
+    # def max_direction(self):
+    #     """evaluate the best next position from current position
+    #     iterate over all possible directions and
+    #     choose max for best policy"""
+    #     # sum for all possible directions and
+    #     nearest_values = []
+    #     for direction in DIRECTIONS[1:4]:
+    #         # get value from the direction you're going
+    #         iter_x, iter_y = np.add([self._pos[0], self._pos[1]], DIRECTIONS_D[direction])
+    #         try:
+    #             value = self._q_table[iter_y][iter_x]
+    #         except IndexError:
+    #             continue
+    #         nearest_values.append((direction, value))
+    #     # return the direction from the corresponding max value
+    #     max_direction = max(nearest_values, key=lambda x: x[1])[0]
+    #     return max_direction
 
     def init_q_table(self):
-        states = [i for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
+        states = ['s({})'.format(i) for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
         return pd.DataFrame(0, index=states, columns=DIRECTIONS)
 
 

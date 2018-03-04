@@ -26,9 +26,13 @@ def check_version():
         numpy_check = True
         invalid = 'numpy'
     if py_check or numpy_check:
-        print('Looks like you are not running the required {invalid} version !'
-              '------------------------------------------------------------'
-              'Please refer to the README and check the dependencies...'.format(invalid=invalid))
+        print('Looks like you are not running the required {invalid} version !\n'
+              '------------------------------------------------------------\n'
+              'Please refer to the README and check the dependencies...\n'.format(invalid=invalid))
+        sleep(1)
+        print(".")
+        sleep(1)
+        print(".")
         sleep(1)
         print('EXITING NOW.')
         sys.exit(1)
@@ -88,8 +92,11 @@ def select_grids(grid_file=GRID_DIR):
     return grid_path
 
 
-def select_start():
-    while True:
+def select_start(run_mode = None):
+    if run_mode == 0 or run_mode == 1:
+        run_mode = 'static' if run_mode == 0 else 'random'
+
+    while not run_mode:
         run_mode = int(input("Select [0] for 'static' start at [0,0] or "
                              "[1] for 'random' starting points... "))
         if run_mode == 0 or run_mode == 1:
@@ -97,46 +104,37 @@ def select_start():
             break
         else:
             print('Selection not in range')
+            run_mode = None
             continue
     return run_mode
 
 
-def select_epsilon():
-    while True:
+def select_epsilon(epsilon=None):
+    while not epsilon:
         epsilon = float(input("Select a value for the {epsilon} between 0..1 \n"
                             "where 0 --> greedy run and 1 --> random run... ".format(epsilon='\u03B5')))
         if 0 <= epsilon <= 1:
             break
         else:
             print('Value is not in range!')
+            epsilon = None
             continue
     return epsilon
 
 
-def select_episodes():
-    while True:
+def select_episodes(episodes=None):
+    while not episodes:
         episodes = int(input("Enter number of how many episodes to run... "))
         if episodes > 0:
             break
         else:
             print('Value cannot be negative!')
+            episodes = None
             continue
     return episodes
 
-
-def select_iterations():
-    while True:
-        iterations = int(input("Enter number of iterations per episode... "))
-        if iterations > 0:
-            break
-        else:
-            print('Value cannot be negative!')
-            continue
-    return iterations
-
-
-def select_convergence():
-    while True:
+def select_convergence(convergence = None):
+    while not convergence:
         convergence = float(input("Enter a convergence value... \n"
                                   "-----------------------------\n"
                                   "HELP: \n"
@@ -149,6 +147,7 @@ def select_convergence():
             break
         else:
             print('Your convergence value is either too high or too low.')
+            convergence = None
             continue
     return convergence
 

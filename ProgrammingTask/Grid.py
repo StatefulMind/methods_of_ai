@@ -100,7 +100,7 @@ class Grid:
         self._eval_grid = [[0 for x in range(self.shape_x)] for y in range(self.shape_y)]
         return self._eval_grid
 
-    def get_policy_str(self):
+    def get_policy_str(self, pos = None):
         '''
         Converts policy values into direction symbols
         :return String: representation of the field
@@ -116,18 +116,20 @@ class Grid:
 
             # If a grid field provides a symbol (every field to which or from which you can not move should do that),
             # then that symbol is used. Otherwise, show the symbol of the direction the policy predicts
-            if self.get_grid_field(x, y).has_symbol:
+            if (x, y) == pos:
+                field_string += '\u039B'
+            elif self.get_grid_field(x, y).has_symbol:
                 field_string += self.get_grid_field(x, y).symbol
             else:
                 field_string += DIRECTION_SYMBOLS[self.get_policy_field(x, y)]
             field_string += " "
         return field_string
 
-    def print_policy(self):
+    def print_policy(self, pos = None):
         """
         Prints the policy in a nice human-readable way
         """
-        print(self.get_policy_str())
+        print(self.get_policy_str(pos=pos))
 
     def get_grid_str(self):
         """
