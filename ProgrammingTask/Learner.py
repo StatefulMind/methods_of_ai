@@ -8,6 +8,7 @@ from UI import check_continue
 # NOMOVE breaks the q_table movement implementation
 DIRECTIONS.remove(NOMOVE)
 
+
 class Learner:
     '''
     Learner generated policy and improves on it
@@ -23,7 +24,6 @@ class Learner:
         self._reward_decay = reward_decay
         # already calculate the epsilon value
         self._epsilon_soft = 1 - epsilon_soft + epsilon_soft/4
-        #self._q_table = np.zeros((self._grid.shape_y, self._grid.shape_x))
         self._q_table = self.init_q_table()
 
     @property
@@ -31,6 +31,9 @@ class Learner:
         return 's({})'.format(self._pos)
 
     def start_position(self):
+        """generates starting position for the agent depending on the given
+        start_position flag
+        :return 'random' or 'static' """
         if self._position_flag == 'static':
             print('Start Position is (0,0)')
             # starting point is left corner - x coordinate corresponds to 0 and max y
@@ -44,9 +47,18 @@ class Learner:
             return random_pos
 
     def random_start(self):
-        return np.random.randint(self._grid.shape_x), np.random.randint(self._grid.shape_y)
+        """ randomly selects integers in range of grid for start value
+        :return x, y: """
+        return np.random.randint(self._grid.shape_x), np.random.randint(
+            self._grid.shape_y)
 
-    def learn(self, episodes=100, convergence=0.00001, interactive='automatic'):
+    def learn(self, episodes=100, convergence=0.00001,
+              interactive='automatic'):
+        """ applies q-learning with the q_table from the class as dataframe over
+        the given episodes while updating the q_table or terminating when
+        convergence value is reached
+        selects starting position - goes in direction given by the policy or
+        explores randomly depending on the soft-epsilon criterion"""
         # when starting randomly pick for each new run a new starting position
         converged = False
         for _e in range(episodes):
@@ -77,14 +89,6 @@ class Learner:
                     direction = np.random.choice(direction_copy)
                     action_probs = field.get_movement_probs()[direction]
                     print('movement not greedily selected')
-
-                # use this direction for indexing the q_table
-                print('Direction {}'.format(direction))
-                print(action_probs)
-
-
-                print('q-Table')
-                print(self._q_table)
 
                 value = self._q_table.ix[self._state, direction]
                 q_table_next = self._q_table.copy()
