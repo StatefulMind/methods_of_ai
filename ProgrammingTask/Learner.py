@@ -122,11 +122,9 @@ class Learner:
                 maximizing_direction = q_table_next.loc[self._state].argmax()
                 self._grid.set_policy_field(x, y, maximizing_direction)
 
-
                 print('Policy before doing the step')
                 # print(self._grid.get_policy_grid())
                 self._grid.print_policy(pos=self._pos)
-
 
                 # update the state after the applied action
                 self._pos = x_next, y_next
@@ -141,7 +139,7 @@ class Learner:
 
                 #Update the q_table
                 self._q_table = q_table_next
-                sleep(.0)
+                sleep(.25)
 
                 if is_terminal:
                     break
@@ -149,7 +147,6 @@ class Learner:
                 print("\n\n")
             if converged == True:
                 print('Policy after convergence and doing the step')
-                # print(self._grid.get_policy_grid())
                 self._grid.print_policy(pos=self._pos)
                 break
 
