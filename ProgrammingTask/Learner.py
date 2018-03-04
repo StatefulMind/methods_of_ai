@@ -114,19 +114,12 @@ class Learner:
                     is_terminal = True
                 else:
                     # new reward value taken from q table and actual taken action after uncertainty calculations
-                   # target_value = self._gamma * self._q_table.ix['s({})'.format((x, y)), make_action] - self._reward_decay
                     target_value = self._gamma * self._q_table.loc['s({})'.format((x_next, y_next))].max() - self._reward_decay
                 # now change state according to action
                 q_table_next.ix[self._state, direction] += self._learning_rate * (target_value - value)
 
-
-                # update the policy so that the next greedy pick is optimal
-                # self._grid.set_policy_field(x, y, self.max_direction())
                 # update policy in direction with max value from original position in q_table
-                #maximizing_direction = q_table_next.ix[self._state, :].max().index[0]
                 maximizing_direction = q_table_next.loc[self._state].argmax()
-                print("Debug qtable of {}".format(self._state))
-                print(q_table_next.ix[(self._state), :])
                 self._grid.set_policy_field(x, y, maximizing_direction)
 
 
