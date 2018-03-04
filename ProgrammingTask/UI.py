@@ -13,8 +13,10 @@ GRID_DIR = './grids'
 
 
 def check_version():
-    """Checks if dependencies are met and imported packages have the right version
-    exits script if requirements are not met"""
+    """
+    Checks if dependencies are met and imported packages have the right version
+    exits script if requirements are not met
+    """
     py_check = False
     numpy_check = False
     python_version = sys.version_info
@@ -39,9 +41,11 @@ def check_version():
 
 
 def check_running():
-    """Checks if the user wants to continue running the program
+    """
+    Checks if the user wants to continue running the program
     if user enters n/N/No/NO False will be returned that leads to termination of script
-    :returns running boolean:"""
+    :returns running boolean:
+    """
     while True:
         user_in = input('Continue? [y/n] ')
         if user_in == 'y' or user_in == 'Y' or user_in == 'Yes' or user_in == 'YES':
@@ -56,6 +60,12 @@ def check_running():
 
 
 def check_interactive(interactive=None):
+    """
+    Reads from user input if the learning is run iteratively - in interactive mode
+    or if learning is run automatically without user intervention.
+    :param interactive: Can take default value here.
+    :return 'interactive' or  'automatic':
+    """
     while not interactive:
         user_in = str(input("Do you want to run in interactive mode (i) or automatic (any key)? "))
         interactive = 'interactive' if user_in == 'i' else 'automatic'
@@ -63,27 +73,23 @@ def check_interactive(interactive=None):
 
 
 def check_continue(user_continue=None):
+    """
+    Reads from input if user wants to continue.
+    :param user_continue:  
+    :return boolean:
+    """
     while not user_continue:
         user_in = input('Next Step? Press enter to continue, "n" to stop ')
         user_continue = False if user_in == 'n' else True
     return user_continue
 
 
-def check_mode():
-    while True:
-        run_mode = int(input('Select [0] for manual run or [1] for automatic run... '))
-        if run_mode == 0 or run_mode == 1:
-            break
-        else:
-            print('Selection not in range')
-            continue
-    return run_mode
-
-
 def select_grids(grid_file=GRID_DIR):
-    """displays provided directory and user chooses from files in directory
+    """
+    displays provided directory and user chooses from files in directory
     or parsing the .grid file accordingly
-    :returns grid: """
+    :returns grid:
+    """
     if os.path.isdir(grid_file):
         print('Grid Files in {g_dir} is:'.format(g_dir=grid_file))
         all_files = os.listdir(grid_file)
@@ -106,8 +112,13 @@ def select_grids(grid_file=GRID_DIR):
     return grid_path
 
 
-#Lets the user select if each episode starts with a random or static position.
-def select_start(run_mode = 'random'):
+def select_start(run_mode='random'):
+    """
+    Reads and assigns the mode for selecting the start value
+    either static - always at lower left corner (0,2) or random for each episode
+    :param run_mode:
+    :return 'static' or 'random':
+    """
     while not run_mode:
         run_mode = int(input("Select [0] for 'static' start at [0,0] or "
                              "[1] for 'random' starting points... "))
@@ -122,9 +133,15 @@ def select_start(run_mode = 'random'):
 
 
 def select_epsilon(epsilon=None):
+    """
+    Reads epsilon value for the epsilon-soft policy,
+    encodes greek lower epsilon as unicode.
+    :param epsilon: Can take default value.
+    :return float epsilon:
+    """
     while not epsilon:
         epsilon = float(input("Select a value for the {epsilon} between 0..1 \n"
-                            "where 0 --> greedy run and 1 --> random run... ".format(epsilon='\u03B5')))
+                              "where 0 --> greedy run and 1 --> random run... ".format(epsilon='\u03B5')))
         if 0 <= epsilon <= 1:
             break
         else:
@@ -135,6 +152,11 @@ def select_epsilon(epsilon=None):
 
 
 def select_episodes(episodes=None):
+    """
+    Read number of epsiodes as integer value from input
+    :param episodes: Can take default value.
+    :return int episodes:
+    """
     while not episodes:
         episodes = int(input("Enter number of how many episodes to run... "))
         if episodes > 0:
@@ -145,7 +167,14 @@ def select_episodes(episodes=None):
             continue
     return episodes
 
-def select_convergence(convergence = None):
+
+def select_convergence(convergence=None):
+    """
+    Read convergence value from input
+    for later usage in the learn function.
+    :param convergence: Can take default value.
+    :return convergence value:
+    """
     while not convergence:
         convergence = float(input("Enter a convergence value... \n"
                                   "-----------------------------\n"
@@ -162,11 +191,3 @@ def select_convergence(convergence = None):
             convergence = None
             continue
     return convergence
-
-
-def run_manual(grid):
-    pass
-
-
-def run_automatic(grid):
-    pass
