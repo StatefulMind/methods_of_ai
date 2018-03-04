@@ -75,11 +75,11 @@ def check_interactive(interactive=None):
 def check_continue(user_continue=None):
     """
     Reads from input if user wants to continue.
-    :param user_continue:  
+    :param user_continue:
     :return boolean:
     """
     while not user_continue:
-        user_in = input('Next Step? Press enter to continue, "n" to stop ')
+        user_in = input('Next Episode? Press enter to continue, "n" to stop ')
         user_continue = False if user_in == 'n' else True
     return user_continue
 
