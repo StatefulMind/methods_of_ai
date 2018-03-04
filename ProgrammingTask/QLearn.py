@@ -26,10 +26,11 @@ def main():
         print('Your .grid file:')
         grid.print_grid()
         # run_mode = check_mode()
-        starting_point = select_start(1)
+        starting_point = select_start('random')
         epsilon = select_epsilon(0.4)
-        episodes = select_episodes(10)
-        convergence = select_convergence(0.001)
+        episodes = select_episodes(10000)
+        #convergence = select_convergence(0.00001)
+        convergence = None
         print('Initial generated policy')
         grid.print_policy()
         learner = Learner(grid=grid, position=starting_point,

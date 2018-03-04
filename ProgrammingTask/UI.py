@@ -55,6 +55,20 @@ def check_running():
     return running
 
 
+def check_run_mode(interactive=None):
+    while not interactive:
+        user_in = str(input("Do you want to run in interactive mode (i) or automatic (any key)?"))
+        mode = 'interactive' if user_in == 'i' else 'automatic'
+    return mode
+
+
+def check_continue(user_continue=None):
+    while not user_continue:
+        user_in = input('Next Step? Press enter to continue, "n" to stop')
+        user_continue = False if user_in == 'n' else True
+    return user_continue
+
+
 def check_mode():
     while True:
         run_mode = int(input('Select [0] for manual run or [1] for automatic run... '))
@@ -92,10 +106,8 @@ def select_grids(grid_file=GRID_DIR):
     return grid_path
 
 
-def select_start(run_mode = None):
-    if run_mode == 0 or run_mode == 1:
-        run_mode = 'static' if run_mode == 0 else 'random'
-
+#Lets the user select if each episode starts with a random or static position.
+def select_start(run_mode = 'random'):
     while not run_mode:
         run_mode = int(input("Select [0] for 'static' start at [0,0] or "
                              "[1] for 'random' starting points... "))
