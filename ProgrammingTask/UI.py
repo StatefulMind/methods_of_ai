@@ -55,16 +55,16 @@ def check_running():
     return running
 
 
-def check_run_mode(interactive=None):
+def check_interactive(interactive=None):
     while not interactive:
-        user_in = str(input("Do you want to run in interactive mode (i) or automatic (any key)?"))
-        mode = 'interactive' if user_in == 'i' else 'automatic'
-    return mode
+        user_in = str(input("Do you want to run in interactive mode (i) or automatic (any key)? "))
+        interactive = 'interactive' if user_in == 'i' else 'automatic'
+    return interactive
 
 
 def check_continue(user_continue=None):
     while not user_continue:
-        user_in = input('Next Step? Press enter to continue, "n" to stop')
+        user_in = input('Next Step? Press enter to continue, "n" to stop ')
         user_continue = False if user_in == 'n' else True
     return user_continue
 

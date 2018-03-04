@@ -63,16 +63,18 @@ class Learner:
         converged = False
         for _e in range(episodes):
             self._pos = self.start_position()
+            user_continue = check_continue()
+            if not user_continue:
+                print("Breaking")
+                break
 
-            while interactive == 'automatic' or check_continue():
+            while interactive == 'automatic' or user_continue or check_continue():
+                user_continue = False
                 is_terminal = False
-                print('Position is {}'.format(self._pos))
                 x = self._pos[0]
                 y = self._pos[1]
                 field = self._grid.get_grid_field(x, y)
                 policy_of_field = self._grid.get_policy_field(x, y)
-                print(field)
-                print(policy_of_field)
 
                 # clone DIRECTIONS array to not have side effects
                 direction_copy = DIRECTIONS[:]
@@ -126,6 +128,9 @@ class Learner:
                 # print(self._grid.get_policy_grid())
                 self._grid.print_policy(pos=self._pos)
 
+                if interactive == 'interactive':
+                    self.print_max_q_table()
+
                 # update the state after the applied action
                 self._pos = x_next, y_next
 
@@ -153,6 +158,19 @@ class Learner:
     def init_q_table(self):
         states = ['s({})'.format(i) for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
         return pd.DataFrame(0, index=states, columns=DIRECTIONS)
+
+    def print_max_q_table(self):
+        field_string = ""
+        line_old = 0
+
+        for y, x in product(range(self._grid.shape_y), range(self._grid.shape_x)):
+            if not line_old == y:
+                field_string += "\n"
+                line_old = y
+                # uses policy values (directions) as key-value for direction symbols
+            field_string += str(np.round(self._q_table.loc['s({})'.format((x, y))].max(), 2))
+            field_string += " "
+        print(field_string)
 
 
 def check_convergence(old_step, new_step, convergence_value=0.05):

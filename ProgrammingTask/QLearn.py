@@ -8,6 +8,7 @@ from UI import select_epsilon
 from UI import select_episodes
 from UI import select_convergence
 from UI import check_version
+from UI import check_interactive
 
 parser = argparse.ArgumentParser(prog='QLearn',
                                  description='''Read grid-file,
@@ -29,6 +30,7 @@ def main():
         starting_point = select_start('random')
         epsilon = select_epsilon(0.4)
         episodes = select_episodes(10000)
+        interactive = check_interactive()
         #convergence = select_convergence(0.00001)
         convergence = None
         print('Initial generated policy')
@@ -36,7 +38,7 @@ def main():
         learner = Learner(grid=grid, position=starting_point,
                           epsilon_soft=epsilon)
         learner.learn(episodes=episodes,
-                      convergence=convergence)
+                      convergence=convergence, interactive=interactive)
         running = check_running()
 
 
