@@ -144,7 +144,7 @@ class GridFieldPenalty(GridField):
 
     @property
     def symbol(self):
-        return '\u058E'
+        return '\u0298'
 
     def __str__(self):
         return self.symbol

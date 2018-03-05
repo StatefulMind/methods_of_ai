@@ -4,6 +4,8 @@ from Constants import DIRECTIONS, DIRECTION_SYMBOLS, UP, RIGHT, DOWN, LEFT
 
 from GridField import GridField
 
+AGENT_SYMBOL='\u03D2'
+
 class Grid:
     '''
     Grid class, initializes grid from file, reads input file
@@ -106,6 +108,8 @@ class Grid:
         :return String: representation of the field
         '''
 
+        if pos:
+            print("{} marks the position of the agent".format(AGENT_SYMBOL))
         field_string = ""
         line_old = 0
         for y, x in itertools.product(range(self.shape_y), range(self.shape_x)):
@@ -117,7 +121,7 @@ class Grid:
             # If a grid field provides a symbol (every field to which or from which you can not move should do that),
             # then that symbol is used. Otherwise, show the symbol of the direction the policy predicts
             if (x, y) == pos:
-                field_string += '\u039B'
+                field_string += AGENT_SYMBOL
             elif self.get_grid_field(x, y).has_symbol:
                 field_string += self.get_grid_field(x, y).symbol
             else:

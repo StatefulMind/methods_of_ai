@@ -9,6 +9,8 @@ from UI import select_episodes
 from UI import select_convergence
 from UI import check_version
 from UI import check_interactive
+from UI import select_delay_time
+from UI import select_learning_rate
 
 parser = argparse.ArgumentParser(prog='QLearn',
                                  description='''Read grid-file,
@@ -26,19 +28,21 @@ def main():
         grid = Grid(select_grids())
         print('Your .grid file:')
         grid.print_grid()
-        # run_mode = check_mode()
-        starting_point = select_start('random')
+        starting_point = select_start()
         epsilon = select_epsilon(0.4)
-        episodes = select_episodes(10000)
+        episodes = select_episodes()
         interactive = check_interactive()
-        #convergence = select_convergence(0.00001)
-        convergence = None
-        print('Initial generated policy')
+        delay_time=select_delay_time()
+        convergence = select_convergence()
+        learning_rate = select_learning_rate()
+
+        print('Initial randomly generated policy"')
         grid.print_policy()
+        print("")
         learner = Learner(grid=grid, position=starting_point,
-                          epsilon_soft=epsilon)
+                          epsilon_soft=epsilon, learning_rate=learning_rate)
         learner.learn(episodes=episodes,
-                      convergence=convergence, interactive=interactive)
+                      convergence=convergence, interactive=interactive, delay_time=delay_time)
         running = check_running()
 
 

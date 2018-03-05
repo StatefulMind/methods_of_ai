@@ -1,9 +1,12 @@
 from itertools import product
 import numpy as np
 from time import sleep
+
+import sys
+
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 import pandas as pd
-from UI import check_continue
+from UI import check_next_episode, check_next_step
 
 # NOMOVE breaks the q_table movement implementation
 DIRECTIONS.remove(NOMOVE)
@@ -52,8 +55,18 @@ class Learner:
         return np.random.randint(self._grid.shape_x), np.random.randint(
             self._grid.shape_y)
 
+    def print_and_quit(self):
+        print("Ending the program")
+        print("The final policy is:")
+        self._grid.print_policy()
+        print("\nThe evaluation values of this policy are:")
+        self.print_max_q_table()
+        print("Thank you for running our program")
+        sys.exit(0)
+
+
     def learn(self, episodes=100, convergence=0.00001,
-              interactive='automatic'):
+              interactive='automatic', delay_time = 0):
         """ applies q-learning with the q_table from the class as dataframe over
         the given episodes while updating the q_table or terminating when
         convergence value is reached
@@ -62,14 +75,17 @@ class Learner:
         # when starting randomly pick for each new run a new starting position
         converged = False
         for _e in range(episodes):
-            self._pos = self.start_position()
-            user_continue = check_continue()
-            if not user_continue:
-                print("Breaking")
-                break
+            # check if the user is interested in running another episode
+            if interactive == 'interactive' and not check_next_episode():
+                self.print_and_quit()
 
-            while interactive == 'automatic' or user_continue or check_continue():
-                user_continue = False
+            self._pos = self.start_position()
+
+            while True:
+                # check if the user is interested in doing another evaluation step
+                if interactive == 'interactive' and not check_next_step():
+                    self.print_and_quit()
+
                 is_terminal = False
                 x = self._pos[0]
                 y = self._pos[1]
@@ -83,14 +99,14 @@ class Learner:
                     # policy of field corresponds with the greedy action (after 1st iteration)
                     direction = policy_of_field
                     action_probs = field.get_movement_probs()[direction]
-                    print('movement greedily selected')
+                    print('Movement greedily selected with epsilon_soft={}'.format(self._epsilon_soft))
                 else:
                     # go explore randomly in all other directions
                     # first remove the greedy direction
                     direction_copy.remove(policy_of_field)
                     direction = np.random.choice(direction_copy)
                     action_probs = field.get_movement_probs()[direction]
-                    print('movement not greedily selected')
+                    print('Movement not greedily selected with epsilon_soft={}'.format(self._epsilon_soft))
 
                 value = self._q_table.ix[self._state, direction]
                 q_table_next = self._q_table.copy()
@@ -124,42 +140,56 @@ class Learner:
                 maximizing_direction = q_table_next.loc[self._state].argmax()
                 self._grid.set_policy_field(x, y, maximizing_direction)
 
-                print('Policy before doing the step')
-                # print(self._grid.get_policy_grid())
-                self._grid.print_policy(pos=self._pos)
-
-                if interactive == 'interactive':
-                    self.print_max_q_table()
-
                 # update the state after the applied action
                 self._pos = x_next, y_next
+
+                print('Policy after doing the step')
+                # print(self._grid.get_policy_grid())
+                self._grid.print_policy(pos=self._pos)
+                print("")
+
+                if interactive == 'interactive':
+                    print("Corresponding table of evaluated values")
+                    self.print_max_q_table()
+                    print("")
 
                 # check for convergence - difference of value arrays
                 if convergence and check_convergence(self._q_table,
                                                      q_table_next,
                                                      convergence_value=convergence):
-                    print('convergence value reached...')
+                    print('Convergence value reached...')
                     converged = True
                     break
 
                 #Update the q_table
                 self._q_table = q_table_next
-                sleep(.25)
+                sleep(delay_time)
 
                 if is_terminal:
                     break
 
-                print("\n\n")
+                print("\n")
             if converged == True:
-                print('Policy after convergence and doing the step')
-                self._grid.print_policy(pos=self._pos)
-                break
+                print('The Q-Learner converged')
+                self.print_and_quit()
+            else:
+                print("Episode finished. Policy after this episode:")
+                self._grid.print_policy()
+                print("\nCorresponding table of evaluated values")
+                self.print_max_q_table()
+                print("")
+        print("Finished evaluating {} episodes.\n".format(episodes))
 
     def init_q_table(self):
         states = ['s({})'.format(i) for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
         return pd.DataFrame(0, index=states, columns=DIRECTIONS)
 
+
     def print_max_q_table(self):
+        """
+        Prints the maximal values of the q_table for each position in the field.
+        This value corresponds to the direction given by the policy.
+        """
         field_string = ""
         line_old = 0
 
@@ -167,8 +197,7 @@ class Learner:
             if not line_old == y:
                 field_string += "\n"
                 line_old = y
-                # uses policy values (directions) as key-value for direction symbols
-            field_string += str(np.round(self._q_table.loc['s({})'.format((x, y))].max(), 2))
+            field_string += str(float(np.round(self._q_table.loc['s({})'.format((x, y))].max(), 2)))
             field_string += " "
         print(field_string)
 

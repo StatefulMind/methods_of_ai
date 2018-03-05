@@ -47,7 +47,7 @@ def check_running():
     :returns running boolean:
     """
     while True:
-        user_in = input('Continue? [y/n] ')
+        user_in = input('Do you want to ontinue with a new run? [y/n] ')
         if user_in == 'y' or user_in == 'Y' or user_in == 'Yes' or user_in == 'YES':
             running = True
             break
@@ -72,14 +72,28 @@ def check_interactive(interactive=None):
     return interactive
 
 
-def check_continue(user_continue=None):
+def check_next_episode(user_continue=None):
     """
-    Reads from input if user wants to continue.
-    :param user_continue:
-    :return boolean:
+    Reads from input if the user wants to execute the next episode.
+    :param user_continue: Can take default value here.
+    :return boolean: False or true, depending on if the user wants to continue
     """
-    while not user_continue:
-        user_in = input('Next Episode? Press enter to continue, "n" to stop ')
+    if not user_continue:
+        user_in = input('Next Episode? Press enter to continue, "n" to stop. ')
+        if user_in == 'n':
+            user_continue = False
+        else:
+            user_continue = True
+    return user_continue
+
+def check_next_step(user_continue=None):
+    """
+    Reads from input if the user wants to execute the next episode.
+    :param user_continue: Can take default value here.
+    :return boolean: False or true, depending on if the user wants to continue
+    """
+    if not user_continue:
+        user_in = input('Do the next step in this episode? Press enter to continue, "n" to stop. ')
         user_continue = False if user_in == 'n' else True
     return user_continue
 
@@ -88,7 +102,7 @@ def select_grids(grid_file=GRID_DIR):
     """
     displays provided directory and user chooses from files in directory
     or parsing the .grid file accordingly
-    :returns grid:
+    :returns grid: A grid file
     """
     if os.path.isdir(grid_file):
         print('Grid Files in {g_dir} is:'.format(g_dir=grid_file))
@@ -112,7 +126,7 @@ def select_grids(grid_file=GRID_DIR):
     return grid_path
 
 
-def select_start(run_mode='random'):
+def select_start(run_mode=None):
     """
     Reads and assigns the mode for selecting the start value
     either static - always at lower left corner (0,2) or random for each episode
@@ -120,7 +134,7 @@ def select_start(run_mode='random'):
     :return 'static' or 'random':
     """
     while not run_mode:
-        run_mode = int(input("Select [0] for 'static' start at [0,0] or "
+        run_mode = int(input("Select [0] for 'static' start at the lower left corner or "
                              "[1] for 'random' starting points... "))
         if run_mode == 0 or run_mode == 1:
             run_mode = 'static' if run_mode == 0 else 'random'
@@ -191,3 +205,27 @@ def select_convergence(convergence=None):
             convergence = None
             continue
     return convergence
+
+
+def select_delay_time(delay_time=None):
+    while not delay_time:
+        user_in = float(input("Enter a time (in seconds) to sleep between each step\n"
+                              "to balance the tradeoff between readable output\n"
+                              "and fast processing (e.g., '0.25')... "))
+        if user_in >= 0:
+            delay_time = user_in
+            break
+        else:
+            print("You have to choose a time >=0")
+    return delay_time
+
+
+def select_learning_rate(learning_rate=None):
+    while not learning_rate:
+        user_in = float(input("Enter the learning rate... "))
+        if user_in >= 0:
+            learning_rate = user_in
+            break
+        else:
+            print("You have to choose a time >=0")
+    return learning_rate
