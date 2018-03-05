@@ -230,6 +230,13 @@ def is_out_of_bounds(x, y, shape):
 
 
 def choose_action(value_list):
+    """
+    chooses action to take from sorted input of possible actions,
+    where the highest probability by sorted item corresponds to
+    80% probability of moving there
+    :param value_list:
+    :return direction int: choose from 1, 2, 3, 4
+    """
     random_value = np.random.uniform()
     if random_value < 0.8:
         return value_list[0][0]
