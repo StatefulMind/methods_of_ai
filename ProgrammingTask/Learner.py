@@ -6,7 +6,8 @@ import sys
 
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 import pandas as pd
-from UI import check_next_episode, check_next_step
+from UI import check_next_episode
+from UI import check_next_step
 
 # NOMOVE breaks the q_table movement implementation
 DIRECTIONS.remove(NOMOVE)
@@ -40,7 +41,7 @@ class Learner:
         """
         Generates starting position for the agent depending on the given
         start_position flag
-        :return 'random' or 'static'
+        :return 'random' or 'static':
         """
         if self._position_flag == 'static':
             print('Start Position is (0,0)')
@@ -72,10 +73,9 @@ class Learner:
         print("Thank you for running our program")
         sys.exit(0)
 
-
     def learn(self, episodes=100, convergence=0.00001,
               interactive='automatic', delay_time = 0):
-        """ applies q-learning with the q_table from the class as dataframe over
+        """ applies q-learning with the q_table from the class as DataFrame over
         the given episodes while updating the q_table or terminating when
         convergence value is reached
         selects starting position - goes in direction given by the policy or
@@ -178,9 +178,9 @@ class Learner:
 
                 if is_terminal:
                     break
-
                 print("\n")
-            if converged == True:
+
+            if converged:
                 print('The Q-Learner converged')
                 self.print_and_quit()
             else:
@@ -193,14 +193,13 @@ class Learner:
 
     def init_q_table(self):
         """
-        Initializes a q_table as a pandas dataframe.
+        Initializes a q_table as a pandas DataFrame.
         Because there are some issues with tuples as indices,
         we use strings of the positions as indices.
-        :return: The new pandas dataframe initialized with 0s
+        :return: The new pandas DataFrame initialized with 0s
         """
         states = ['s({})'.format(i) for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
         return pd.DataFrame(0, index=states, columns=DIRECTIONS)
-
 
     def print_max_q_table(self):
         """

@@ -86,6 +86,7 @@ def check_next_episode(user_continue=None):
             user_continue = True
     return user_continue
 
+
 def check_next_step(user_continue=None):
     """
     Reads from input if the user wants to execute the next episode.
