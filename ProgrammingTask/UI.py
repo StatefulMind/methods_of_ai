@@ -194,7 +194,8 @@ def select_convergence(convergence=None):
                                   "-----------------------------\n"
                                   "HELP: \n"
                                   "The absolute difference of the values from the "
-                                  "generated q-tables, leading to termination if "
+                                  "q-table and the q-table after the next action, "
+                                  "leading to termination if "
                                   "this value is satisfied\n"
                                   "======== \n"
                                   "... "))
