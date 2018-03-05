@@ -15,7 +15,7 @@ from UI import select_learning_rate
 
 def main():
     running = True
-    check_version()
+    # check_version()
     while running:
         grid = Grid(select_grids())
         print('Your .grid file:')
