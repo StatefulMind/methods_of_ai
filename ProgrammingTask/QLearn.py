@@ -13,19 +13,9 @@ from UI import select_delay_time
 from UI import select_learning_rate
 
 
-#TODO Kann komplett raus, oder?
-parser = argparse.ArgumentParser(prog='QLearn',
-                                 description='''Read grid-file,
-                                 parse and print grid file and apply Q-learning.''',
-                                 usage='%(prog)s [options]',
-                                 prefix_chars='-')
-parser.add_argument('-g', '--grid_file', help='path to input .grid file')
-args = parser.parse_args()
-
-
 def main():
     running = True
-    #check_version()
+    check_version()
     while running:
         grid = Grid(select_grids())
         print('Your .grid file:')
