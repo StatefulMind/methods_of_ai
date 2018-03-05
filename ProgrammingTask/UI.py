@@ -47,7 +47,7 @@ def check_running():
     :returns running boolean:
     """
     while True:
-        user_in = input('Do you want to ontinue with a new run? [y/n] ')
+        user_in = input('Do you want to continue with a new run? [y/n] ')
         if user_in == 'y' or user_in == 'Y' or user_in == 'Yes' or user_in == 'YES':
             running = True
             break
