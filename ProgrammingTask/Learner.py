@@ -13,14 +13,14 @@ DIRECTIONS.remove(NOMOVE)
 
 
 class Learner:
-    '''
-    Learner generated policy and improves on it
-    '''
+    """
+    The Learner generates a random policy and improves on it
+    """
 
-    def __init__(self, grid, position='static', learning_rate=0.5, gamma=0.9,
+    def __init__(self, grid, position_flag='static', learning_rate=0.5, gamma=0.9,
                  reward_decay=0.04, epsilon_soft=0.4):
         self._grid = grid
-        self._position_flag = position
+        self._position_flag = position_flag
         self._pos = self.start_position()
         self._learning_rate = learning_rate
         self._gamma = gamma
@@ -31,12 +31,17 @@ class Learner:
 
     @property
     def _state(self):
+        """
+        Returns a string representation of the recent position of the agent as index for the pandas dataframe
+        """
         return 's({})'.format(self._pos)
 
     def start_position(self):
-        """generates starting position for the agent depending on the given
+        """
+        Generates starting position for the agent depending on the given
         start_position flag
-        :return 'random' or 'static' """
+        :return 'random' or 'static'
+        """
         if self._position_flag == 'static':
             print('Start Position is (0,0)')
             # starting point is left corner - x coordinate corresponds to 0 and max y
@@ -56,6 +61,9 @@ class Learner:
             self._grid.shape_y)
 
     def print_and_quit(self):
+        """
+        Prints the best found policy with the corresponding evaluation and terminates the program.
+        """
         print("Ending the program")
         print("The final policy is:")
         self._grid.print_policy()
@@ -72,13 +80,16 @@ class Learner:
         convergence value is reached
         selects starting position - goes in direction given by the policy or
         explores randomly depending on the soft-epsilon criterion"""
-        # when starting randomly pick for each new run a new starting position
+
         converged = False
         for _e in range(episodes):
+            # run a new episode
+
             # check if the user is interested in running another episode
             if interactive == 'interactive' and not check_next_episode():
                 self.print_and_quit()
 
+            # assign a start_position to the agent
             self._pos = self.start_position()
 
             while True:
@@ -181,6 +192,12 @@ class Learner:
         print("Finished evaluating {} episodes.\n".format(episodes))
 
     def init_q_table(self):
+        """
+        Initializes a q_table as a pandas dataframe.
+        Because there are some issues with tuples as indices,
+        we use strings of the positions as indices.
+        :return: The new pandas dataframe initialized with 0s
+        """
         states = ['s({})'.format(i) for i in product(range(self._grid.shape_x), range(self._grid.shape_y))]
         return pd.DataFrame(0, index=states, columns=DIRECTIONS)
 
