@@ -208,6 +208,12 @@ def select_convergence(convergence=None):
 
 
 def select_delay_time(delay_time=None):
+    """
+    Read from user via input the float of how many seconds to pause
+    between each step
+    :param delay_time: can take default value.
+    :return delay_time:
+    """
     while not delay_time:
         user_in = float(input("Enter a time (in seconds) to sleep between each step\n"
                               "to balance the tradeoff between readable output\n"
@@ -221,11 +227,17 @@ def select_delay_time(delay_time=None):
 
 
 def select_learning_rate(learning_rate=None):
+    """
+    Reads the learning rate as float from user input
+    default value can be assigned
+    :param learning_rate:
+    :return learning_rate:
+    """
     while not learning_rate:
         user_in = float(input("Enter the learning rate... "))
         if user_in >= 0:
             learning_rate = user_in
             break
         else:
-            print("You have to choose a time >=0")
+            print("The Learning Rate has to be >= 0")
     return learning_rate
