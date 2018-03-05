@@ -7,7 +7,7 @@ Either apply learning iteratively and interactive or automatic until convergence
 has been reached or amount of episodes reached
 
 Usage: 
-`python GridWorld.py -h` for help.
+`python QLearn.py`
 
 
 Dependencies:
