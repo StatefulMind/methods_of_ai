@@ -6,6 +6,7 @@ from UI import select_discount
 from UI import select_step_cost
 from UI import select_convergence
 from UI import select_learning_rate
+from UI import check_running
 from Grid import Grid
 from Evaluator import Evaluator
 
@@ -18,10 +19,6 @@ parse and print grid file accordingly.''',
                                  prefix_chars='-')
 parser.add_argument('-e', '--eval', default=50, type=int,
                    help='number of evaluations on the iterated policy')
-parser.add_argument('-s', '--step', action='store_true',
-                    help='manual iteration for policy iteration')
-parser.add_argument('-g', '--gamma', default=1, type=float,
-                    help='discount value gamma')
 args = parser.parse_args()
 
 
@@ -118,16 +115,20 @@ def main():
         step_cost = select_step_cost()
         # ask about convergence epsilon value
         convergence = select_convergence()
-        # ask about the learning rate
+        # ask about the discount gamma ?
         gamma = select_learning_rate()
 
         # ask if user wants each iteration in single steps
         interactive = check_interactive()
 
+        print('The initial randomly generated policy:')
+        grid.print_policy()
+        # init the Evaluator with the selected value for the learning steps
         evaluator = Evaluator(grid=grid)
         evaluator.iterate(iterations=iterations, step_cost=step_cost,
                           discount=discount,
                           convergence_epsilon=convergence)
+        running = check_running()
 
 if __name__ == '__main__':
     main()

@@ -291,3 +291,20 @@ def select_step_cost(step_cost=None):
             print("Step cost cannot be negative!")
             continue
     return step_cost
+
+
+def select_evaluations(evaluations=None):
+    """
+    Reads number of evaluation steps from user input.
+    :param evalutaions: takes default values here.
+    :return int evaluations:
+    """
+    while not evaluations:
+        evaluations = int(
+            input("Enter number of evaluations per iteration step... "))
+        if evaluations >= 0:
+            break
+        else:
+            print("Evaluation steps cannot be negative!")
+            continue
+    return evaluations
