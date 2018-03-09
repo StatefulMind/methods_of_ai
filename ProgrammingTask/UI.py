@@ -183,6 +183,24 @@ def select_episodes(episodes=None):
     return episodes
 
 
+def select_iterations(iterations=None):
+    """
+    Reads number of iterations as integer value from input
+    :param iterations: Can take default value.
+    :return iteration int:
+    """
+    while not iterations:
+        iterations = int(
+            input("Enter number of how many iterations to run... "))
+        if iterations > 0:
+            break
+        else:
+            print('Value cannot be negative!')
+            iterations = None
+            continue
+    return iterations
+
+
 def select_convergence(convergence=None):
     """
     Read convergence value from input

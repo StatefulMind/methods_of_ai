@@ -105,7 +105,7 @@ def run_interactive_mode(grid):
 
 
 def main():
-    grid = Grid(grid_file=select_grids)
+    grid = Grid(grid_file=select_grids())
 
     print("Our GridWorld looks as follows:")
     grid.print_grid()
