@@ -1,8 +1,6 @@
 try:
     import os
     import numpy as np
-    import itertools
-    import argparse
     import sys
     from time import sleep
 except ImportError as e:
@@ -277,3 +275,19 @@ def select_discount(discount=None):
             print("Discount factor cannot be negative!")
             continue
     return discount
+
+
+def select_step_cost(step_cost=None):
+    """
+    Reads step cost factor as float from user input
+    :param step_cost: takes default value.
+    :return float step_cost:
+    """
+    while not step_cost:
+        step_cost = float(input("Enter step cost... "))
+        if step_cost >= 0:
+            break
+        else:
+            print("Step cost cannot be negative!")
+            continue
+    return step_cost
