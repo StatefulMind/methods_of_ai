@@ -1,10 +1,16 @@
 import itertools
 import random
-from Constants import DIRECTIONS, DIRECTION_SYMBOLS, UP, RIGHT, DOWN, LEFT
+from Constants import DIRECTIONS
+from Constants import DIRECTION_SYMBOLS
+from Constants import UP
+from Constants import RIGHT
+from Constants import DOWN
+from Constants import LEFT
 
 from GridField import GridField
 
-AGENT_SYMBOL='\u03D2'
+AGENT_SYMBOL = '\u03D2'
+
 
 class Grid:
     '''

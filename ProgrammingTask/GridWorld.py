@@ -1,4 +1,5 @@
 import argparse
+from UI import select_grids
 from Grid import Grid
 from Evaluator import Evaluator
 
@@ -9,7 +10,6 @@ parser = argparse.ArgumentParser(prog='Grid World Evaluator',
 parse and print grid file accordingly.''',
                                  usage='%(prog)s [options]',
                                  prefix_chars='-')
-parser.add_argument('grid_file', help='path to input .grid file')
 parser.add_argument('-i', '--iter', default=50, type=int,
                    help='number of iterations performed by the policy iteration')
 parser.add_argument('-e', '--eval', default=50, type=int,
@@ -105,7 +105,7 @@ def run_interactive_mode(grid):
 
 
 def main():
-    grid = Grid(grid_file=args.grid_file)
+    grid = Grid(grid_file=select_grids)
 
     print("Our GridWorld looks as follows:")
     grid.print_grid()
