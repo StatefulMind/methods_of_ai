@@ -59,10 +59,6 @@ def run_interactive_mode(grid):
         grid.print_policy()
         print("")
 
-        new_policy = grid.get_policy_grid()
-        if old_policy == new_policy:
-            print("The policy has converged!")
-        old_policy = new_policy
 
 
 def main():
@@ -95,6 +91,8 @@ def main():
         # init the Evaluator with the selected value for the learning steps
         evaluator = Evaluator(grid=grid)
         for step in evaluation_steps:
+            if interactive == 'interactive': 
+                check_next_step()
             evaluator.iterate(iterations=iterations, step_cost=step_cost,
                           discount=discount,
                           convergence_epsilon=convergence)

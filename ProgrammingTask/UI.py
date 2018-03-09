@@ -92,7 +92,7 @@ def check_next_step(user_continue=None):
     :return boolean: False or true, depending on if the user wants to continue
     """
     if not user_continue:
-        user_in = input('Do the next step in this episode? Press enter to continue, "n" to stop. ')
+        user_in = input('Do the next step ? Press enter to continue, "n" to stop. ')
         user_continue = False if user_in == 'n' else True
     return user_continue
 
