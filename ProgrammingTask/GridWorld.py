@@ -1,5 +1,10 @@
 import argparse
 from UI import select_grids
+from UI import select_iterations
+from UI import check_interactive
+from UI import select_discount
+from UI import select_step_cost
+from UI import select_convergence
 from Grid import Grid
 from Evaluator import Evaluator
 
@@ -10,14 +15,10 @@ parser = argparse.ArgumentParser(prog='Grid World Evaluator',
 parse and print grid file accordingly.''',
                                  usage='%(prog)s [options]',
                                  prefix_chars='-')
-parser.add_argument('-i', '--iter', default=50, type=int,
-                   help='number of iterations performed by the policy iteration')
 parser.add_argument('-e', '--eval', default=50, type=int,
                    help='number of evaluations on the iterated policy')
 parser.add_argument('-s', '--step', action='store_true',
                     help='manual iteration for policy iteration')
-parser.add_argument('-c', '--cost', default = 0.04,
-                    help='cost for every step' )
 parser.add_argument('-g', '--gamma', default=1, type=float,
                     help='discount value gamma')
 parser.add_argument('-eps', '--epsilon', default=0, type=float,
@@ -105,16 +106,26 @@ def run_interactive_mode(grid):
 
 
 def main():
-    grid = Grid(grid_file=select_grids())
+    running = True
+    while running:
+        grid = Grid(grid_file=select_grids())
 
-    print("Our GridWorld looks as follows:")
-    grid.print_grid()
+        print("Our GridWorld looks as follows:")
+        grid.print_grid()
 
-    if not args.step:
-        run_automatic_mode(grid)
-    else:
-        run_interactive_mode(grid)
+        # ask how many iterations should be done
+        iterations = select_iterations()
+        discount = select_discount()
+        step_cost = select_step_cost()
+        convergence = select_convergence()
 
+        # ask if user wants each iteration in single steps
+        interactive = check_interactive()
+
+        evaluator = Evaluator(grid=grid)
+        evaluator.iterate(iterations=iterations, step_cost=step_cost,
+                          discount=discount,
+                          convergence_epsilon=convergence)
 
 if __name__ == '__main__':
     main()

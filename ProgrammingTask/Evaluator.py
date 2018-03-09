@@ -10,8 +10,7 @@ class Evaluator:
     def __init__(self, grid):
         self._grid = grid
 
-
-    def iterate(self, iterations, step_cost, discount, convergence_epsilon = None):
+    def iterate(self, iterations, step_cost, discount, convergence_epsilon=None):
         """
         Performs the policy iteration without an evaluation
         Writes the computations into eval_grid in our grid
