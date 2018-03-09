@@ -26,6 +26,7 @@ parser.add_argument('-v', '--verbose', action='store_true',
                     help='print verbose output (every intermediate evaluation step)')
 args = parser.parse_args()
 
+
 def run_automatic_mode(grid):
     print("Running policy iteration in automatic mode")
     print("On file {}, with {} iteration steps or convergence to delta < {}, discount of {} and step cost {}".format(
@@ -57,6 +58,7 @@ def run_automatic_mode(grid):
     print("Policy Iteration and Evaluation finished. The optimal policy looks like this:")
     grid.print_policy()
     print("")
+
 
 def run_interactive_mode(grid):
     default_iter = 50
@@ -101,6 +103,7 @@ def run_interactive_mode(grid):
             print("The policy has converged!")
         old_policy = new_policy
 
+
 def main():
     grid = Grid(grid_file=args.grid_file)
 
@@ -111,6 +114,7 @@ def main():
         run_automatic_mode(grid)
     else:
         run_interactive_mode(grid)
+
 
 if __name__ == '__main__':
     main()
