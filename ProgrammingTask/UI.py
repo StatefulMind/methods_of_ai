@@ -261,3 +261,19 @@ def select_learning_rate(learning_rate=None):
         else:
             print("The Learning Rate has to be >= 0")
     return learning_rate
+
+
+def select_discount(discount=None):
+    """
+    Reads discount factor as float from user.
+    :param discount: Takes default value here.
+    :return float discount:
+    """
+    while not discount:
+        discount = float(input("Enter discount factor... "))
+        if discount >= 0:
+            break
+        else:
+            print("Discount factor cannot be negative!")
+            continue
+    return discount
