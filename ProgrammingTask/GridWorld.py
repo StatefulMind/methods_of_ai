@@ -5,6 +5,7 @@ from UI import check_interactive
 from UI import select_discount
 from UI import select_step_cost
 from UI import select_convergence
+from UI import select_learning_rate
 from Grid import Grid
 from Evaluator import Evaluator
 
@@ -21,10 +22,6 @@ parser.add_argument('-s', '--step', action='store_true',
                     help='manual iteration for policy iteration')
 parser.add_argument('-g', '--gamma', default=1, type=float,
                     help='discount value gamma')
-parser.add_argument('-eps', '--epsilon', default=0, type=float,
-                    help='convergence value epsilon')
-parser.add_argument('-v', '--verbose', action='store_true',
-                    help='print verbose output (every intermediate evaluation step)')
 args = parser.parse_args()
 
 
@@ -115,9 +112,14 @@ def main():
 
         # ask how many iterations should be done
         iterations = select_iterations()
+        # ask how hight the discount factor should be
         discount = select_discount()
+        # ask about the cost each step
         step_cost = select_step_cost()
+        # ask about convergence epsilon value
         convergence = select_convergence()
+        # ask about the learning rate
+        gamma = select_learning_rate()
 
         # ask if user wants each iteration in single steps
         interactive = check_interactive()
