@@ -7,6 +7,7 @@ from UI import select_step_cost
 from UI import select_convergence
 from UI import select_learning_rate
 from UI import check_running
+from UI import select_evaluations
 from Grid import Grid
 from Evaluator import Evaluator
 
@@ -23,16 +24,8 @@ args = parser.parse_args()
 
 
 def run_automatic_mode(grid):
-    print("Running policy iteration in automatic mode")
     print("On file {}, with {} iteration steps or convergence to delta < {}, discount of {} and step cost {}".format(
         args.grid_file, args.iter, args.epsilon, args.gamma, args.cost))
-    print("Will perform {} evaluations".format(args.eval))
-
-    print("The current (randomized policy):")
-    grid.print_policy()
-    print("")
-
-    evaluator = Evaluator(grid)
 
     old_policy = grid.get_policy_grid()
     for evaluation_step in range(args.eval):
@@ -117,6 +110,8 @@ def main():
         convergence = select_convergence()
         # ask about the discount gamma ?
         gamma = select_learning_rate()
+        # ask about number of evaluation steps
+        evaluation_steps = select_evaluations()
 
         # ask if user wants each iteration in single steps
         interactive = check_interactive()
@@ -128,6 +123,8 @@ def main():
         evaluator.iterate(iterations=iterations, step_cost=step_cost,
                           discount=discount,
                           convergence_epsilon=convergence)
+        for _ in evaluation_steps:
+            evaluator.evaluate()
         running = check_running()
 
 if __name__ == '__main__':
