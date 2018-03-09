@@ -32,16 +32,6 @@ def run_automatic_mode(grid):
 
 
 def run_interactive_mode(grid):
-    default_iter = 50
-    default_eval = 1
-
-    evaluator = Evaluator(grid)
-
-    print("Running in user interactive manual mode, therefore iter and eval are ignored.")
-    print("Using step cost {} and discount factor {}".format(args.cost, args.gamma))
-    print("The current policy is:")
-    grid.print_policy()
-    print("")
 
     old_policy = grid.get_policy_grid()
     while True:
@@ -82,6 +72,7 @@ def main():
 
         print("Our GridWorld looks as follows:")
         grid.print_grid()
+        old_policy = grid.get_policy_grid()
 
         # ask how many iterations should be done
         iterations = select_iterations()
@@ -103,12 +94,18 @@ def main():
         grid.print_policy()
         # init the Evaluator with the selected value for the learning steps
         evaluator = Evaluator(grid=grid)
-        for i in evaluation_steps:
+        for step in evaluation_steps:
             evaluator.iterate(iterations=iterations, step_cost=step_cost,
                           discount=discount,
                           convergence_epsilon=convergence)
             evaluator.evaluate()
-            run_and_print_grid_per_step(grid, i)
+            run_and_print_grid_per_step(grid, step)
+        new_policy = grid.get_policy_grid()
+        # check for convergence if both grids are the same
+        if old_policy == new_policy:
+            print("Policy converged! ")
+
+        # interact if program should run again
         running = check_running()
 
 if __name__ == '__main__':
