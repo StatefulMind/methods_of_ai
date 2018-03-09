@@ -8,29 +8,12 @@ from UI import select_convergence
 from UI import select_learning_rate
 from UI import check_running
 from UI import select_evaluations
+from UI import run_and_print_grid_per_step
 from Grid import Grid
 from Evaluator import Evaluator
 
 
-# instantiate parser
-parser = argparse.ArgumentParser(prog='Grid World Evaluator',
-                                 description='''Read grid-file from stdin,
-parse and print grid file accordingly.''',
-                                 usage='%(prog)s [options]',
-                                 prefix_chars='-')
-parser.add_argument('-e', '--eval', default=50, type=int,
-                   help='number of evaluations on the iterated policy')
-args = parser.parse_args()
-
-
 def run_automatic_mode(grid):
-    print("On file {}, with {} iteration steps or convergence to delta < {}, discount of {} and step cost {}".format(
-        args.grid_file, args.iter, args.epsilon, args.gamma, args.cost))
-
-    old_policy = grid.get_policy_grid()
-    for evaluation_step in range(args.eval):
-        evaluator.iterate(args.iter, step_cost=args.cost, discount=args.gamma, convergence_epsilon=args.epsilon)
-        evaluator.evaluate()
 
         if True:
             print("Evaluation step {} of {} done".format(evaluation_step + 1, args.eval))
@@ -120,11 +103,12 @@ def main():
         grid.print_policy()
         # init the Evaluator with the selected value for the learning steps
         evaluator = Evaluator(grid=grid)
-        evaluator.iterate(iterations=iterations, step_cost=step_cost,
+        for i in evaluation_steps:
+            evaluator.iterate(iterations=iterations, step_cost=step_cost,
                           discount=discount,
                           convergence_epsilon=convergence)
-        for _ in evaluation_steps:
             evaluator.evaluate()
+            run_and_print_grid_per_step(grid, i)
         running = check_running()
 
 if __name__ == '__main__':

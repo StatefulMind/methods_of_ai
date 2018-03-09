@@ -308,3 +308,9 @@ def select_evaluations(evaluations=None):
             print("Evaluation steps cannot be negative!")
             continue
     return evaluations
+
+
+def run_and_print_grid_per_step(grid, step_count):
+    print("Evaluation step {}...").format(step_count+1)
+    grid.print_policy
+    print("\n")
