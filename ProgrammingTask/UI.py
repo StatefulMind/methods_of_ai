@@ -165,38 +165,11 @@ def select_epsilon(epsilon=None):
 
 
 def select_episodes(episodes=None):
-    """
-    Read number of epsiodes as integer value from input
-    :param episodes: Can take default value.
-    :return int episodes:
-    """
-    while not episodes:
-        episodes = int(input("Enter number of how many episodes to run... "))
-        if episodes > 0:
-            break
-        else:
-            print('Value cannot be negative!')
-            episodes = None
-            continue
-    return episodes
+    return int(check_input_and_return("number of episodes", episodes))
 
 
 def select_iterations(iterations=None):
-    """
-    Reads number of iterations as integer value from input
-    :param iterations: Can take default value.
-    :return iteration int:
-    """
-    while not iterations:
-        iterations = int(
-            input("Enter number of how many iterations to run... "))
-        if iterations > 0:
-            break
-        else:
-            print('Value cannot be negative!')
-            iterations = None
-            continue
-    return iterations
+    return int(check_input_and_return("number of iterations", iterations))
 
 
 def select_convergence(convergence=None):
@@ -226,88 +199,35 @@ def select_convergence(convergence=None):
 
 
 def select_delay_time(delay_time=None):
-    """
-    Read from user via input the float of how many seconds to pause
-    between each step
-    :param delay_time: can take default value.
-    :return delay_time:
-    """
-    while not delay_time:
-        user_in = float(input("Enter a time (in seconds) to sleep between each step\n"
-                              "to balance the tradeoff between readable output\n"
-                              "and fast processing (e.g., '0.25')... "))
-        if user_in >= 0:
-            delay_time = user_in
-            break
-        else:
-            print("You have to choose a time >=0")
-    return delay_time
+    return float(check_input_and_return("time (in s) to sleep between steps",
+                                        delay_time))
 
 
 def select_learning_rate(learning_rate=None):
-    """
-    Reads the learning rate as float from user input
-    default value can be assigned
-    :param learning_rate:
-    :return learning_rate:
-    """
-    while not learning_rate:
-        user_in = float(input("Enter the learning rate... "))
-        if user_in >= 0:
-            learning_rate = user_in
-            break
-        else:
-            print("The Learning Rate has to be >= 0")
-    return learning_rate
+    return float(check_input_and_return("learning rate", learning_rate))
 
 
 def select_discount(discount=None):
-    """
-    Reads discount factor as float from user.
-    :param discount: Takes default value here.
-    :return float discount:
-    """
-    while not discount:
-        discount = float(input("Enter discount factor... "))
-        if discount >= 0:
-            break
-        else:
-            print("Discount factor cannot be negative!")
-            continue
-    return discount
+    return float(check_input_and_return("discount factor", discount))
 
 
 def select_step_cost(step_cost=None):
-    """
-    Reads step cost factor as float from user input
-    :param step_cost: takes default value.
-    :return float step_cost:
-    """
-    while not step_cost:
-        step_cost = float(input("Enter step cost... "))
-        if step_cost >= 0:
-            break
-        else:
-            print("Step cost cannot be negative!")
-            continue
-    return step_cost
+    return float(check_input_and_return("step cost", step_cost))
 
 
 def select_evaluations(evaluations=None):
-    """
-    Reads number of evaluation steps from user input.
-    :param evalutaions: takes default values here.
-    :return int evaluations:
-    """
-    while not evaluations:
-        evaluations = int(
-            input("Enter number of evaluations per iteration step... "))
-        if evaluations >= 0:
+    return int(check_input_and_return("evaluations", evaluations))
+
+
+def check_input_and_return(value_name, check_value):
+    while not check_value:
+        check_value = input(("Enter {}... ".format(value_name)))
+        if float(check_value) >= 0.0:
             break
         else:
-            print("Evaluation steps cannot be negative!")
+            print("This value cannot be negative!")
             continue
-    return evaluations
+    return check_value
 
 
 def run_and_print_grid_per_step(grid, step_count):
