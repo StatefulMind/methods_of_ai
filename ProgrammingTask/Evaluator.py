@@ -21,8 +21,8 @@ class Evaluator:
         :return:
         """
         # succ_array_prev encodes the previous step of policy iteration
-        succ_array_prev = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
-
+        succ_array_prev = [[0 for x in range(self._grid.shape_x)]
+                           for y in range(self._grid.shape_y)]
 
         for i in range(iterations):
             # succ_array_new encodes the recent step of policy iteration
@@ -117,9 +117,24 @@ class Evaluator:
             diff += abs(old_iteration_step[y][x] - new_iteration_step[y][x])
         return diff < convergence_epsilon
 
+    def print_grid_eval_values(self):
+        field_string = ""
+        line_old = 0
+        for y, x in product(range(self._grid.shape_y),
+                            range(self._grid.shape_x)):
+            if not line_old == y:
+                field_string += "\n"
+                line_old = y
+            field_string += str(float(
+                np.round(self._grid.get_eval_field(x, y), 2)))
+            field_string += " "
+        print(field_string)
+
+
 def isOutOfBoundaries(x, y, shape):
     '''
-    returns if iteration goes out of bounds - since outer walls are not defined and
+    returns if iteration goes out of bounds
+    - since outer walls are not defined and
     restricted by array length limits
     :param x:
     :param y:

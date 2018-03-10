@@ -8,35 +8,12 @@ from UI import select_learning_rate
 from UI import check_running
 from UI import select_evaluations
 from UI import run_and_print_grid_per_step
-from UI import get_next_evalutation_step
+from UI import get_next_evaluation_step
 from UI import get_next_iteration_step
 from UI import check_next_step
 import sys
 from Grid import Grid
 from Evaluator import Evaluator
-
-
-def run_interactive_mode(grid):
-
-        iterations = input('How many iteration steps do you want to perform (int, default = {})? '.format(default_iter))
-        if iterations == '':
-            iterations = default_iter
-        else:
-            iterations = int(iterations)
-        eval_steps = input('How many evaluation steps do you want to perform (int, default = {})?'.format(default_eval))
-        if eval_steps == '':
-            eval_steps = default_eval
-        else:
-            eval_steps = int(eval_steps)
-
-        for eval_step in range(eval_steps):
-            evaluator.iterate(iterations, step_cost=args.cost, discount=args.gamma)
-            evaluator.evaluate()
-
-        print("")
-        print("Finished {} evaluation steps. Optimized policy:".format(eval_step+1))
-        grid.print_policy()
-        print("")
 
 
 def main():
@@ -68,30 +45,32 @@ def main():
         grid.print_policy()
         # init the Evaluator with the selected value for the learning steps
         evaluator = Evaluator(grid=grid)
-        for step in evaluation_steps:
+        for step in range(evaluation_steps):
             if interactive == 'interactive':
                 check_next_step()
                 iterations = 1 if get_next_iteration_step() is True else print_done_and_terminate()
-                
             evaluator.iterate(iterations=iterations, step_cost=step_cost,
-                          discount=discount,
-                          convergence_epsilon=convergence)
+                              discount=discount,
+                              convergence_epsilon=convergence)
             evaluator.evaluate()
             run_and_print_grid_per_step(grid, step)
         new_policy = grid.get_policy_grid()
         # check for convergence if both grids are the same
         if old_policy == new_policy:
-            print("Policy converged! ")
+            print("Policy converged!")
 
         # interact if program should run again
         running = check_running()
-
-
-if __name__ == '__main__':
-    main()
+        if not running:
+            print("The values for the policy grid are...")
+            print(evaluator.print_grid_eval_values())
 
 
 def print_done_and_terminate():
     print('You have not confirmed - exiting now.'
           'Thank you!')
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

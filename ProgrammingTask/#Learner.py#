@@ -51,7 +51,8 @@ class Learner:
             # pull random position
             random_pos = self.random_start()
             # as long as it is not a field repeat
-            while not self._grid.get_grid_field(random_pos[0], random_pos[1]).type == 'F':
+            while not self._grid.get_grid_field(
+                    random_pos[0], random_pos[1]).type == 'F':
                 random_pos = self.random_start()
             return random_pos
 
@@ -63,7 +64,8 @@ class Learner:
 
     def print_and_quit(self):
         """
-        Prints the best found policy with the corresponding evaluation and terminates the program.
+        Prints the best found policy with the corresponding evaluation and
+        terminates the program.
         """
         print("Ending the program")
         print("The final policy is:")
@@ -74,7 +76,7 @@ class Learner:
         sys.exit(0)
 
     def learn(self, episodes=100, convergence=0.00001,
-              interactive='automatic', delay_time = 0):
+              interactive='automatic', delay_time=0):
         """ applies q-learning with the q_table from the class as DataFrame over
         the given episodes while updating the q_table or terminating when
         convergence value is reached
@@ -122,7 +124,8 @@ class Learner:
                 value = self._q_table.ix[self._state, direction]
                 q_table_next = self._q_table.copy()
                 # action by movement probability, sort directions by their probabilities
-                relevant_action_probabilities = sorted(action_probs.items(), key=lambda val: val[1],
+                relevant_action_probabilities = sorted(action_probs.items(),
+                                                       key=lambda val: val[1],
                                                        reverse=True)[:3]
                 make_action = choose_action(relevant_action_probabilities)
 
@@ -209,7 +212,8 @@ class Learner:
         field_string = ""
         line_old = 0
 
-        for y, x in product(range(self._grid.shape_y), range(self._grid.shape_x)):
+        for y, x in product(range(self._grid.shape_y),
+                            range(self._grid.shape_x)):
             if not line_old == y:
                 field_string += "\n"
                 line_old = y

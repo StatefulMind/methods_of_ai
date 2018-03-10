@@ -106,7 +106,8 @@ class Grid:
         initializes array of zero as initial evaluation grid
         :return array: Zero evaluation
         '''
-        self._eval_grid = [[0 for x in range(self.shape_x)] for y in range(self.shape_y)]
+        self._eval_grid = [[0 for x in range(self.shape_x)] for y
+                           in range(self.shape_y)]
         return self._eval_grid
 
     def get_policy_str(self, pos=None):
@@ -136,7 +137,7 @@ class Grid:
             field_string += " "
         return field_string
 
-    def print_policy(self, pos = None):
+    def print_policy(self, pos=None):
         """
         Prints the policy in a nice human-readable way
         """

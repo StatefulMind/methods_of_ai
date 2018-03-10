@@ -311,6 +311,18 @@ def select_evaluations(evaluations=None):
 
 
 def run_and_print_grid_per_step(grid, step_count):
-    print("Evaluation step {}...").format(step_count+1)
-    grid.print_policy
+    print("Evaluation step {}...".format(step_count+1))
+    grid.print_policy()
     print("\n")
+
+
+def get_next_iteration_step():
+    iteration = input("Do you want to iterate? [y/n] ")
+    iteration = True if iteration == 'y' else False
+    return iteration
+
+
+def get_next_evaluation_step():
+    evaluation = bool(input("Do you want to evaluate? [y/n] "))
+    evaluation = True if evaluation == 'y' else False
+    return evaluation
