@@ -243,10 +243,14 @@ def run_and_print_grid_per_step(grid, step_count):
 
 
 def get_next_iteration_steps():
-    iteration = input("How many steps do you want to iterate and evaluate afterwards? Type [n] or [0] to stop ")
+    iteration = input("How many steps do you want to iterate and evaluate?"
+                      " Type [0] to stop ")
+    try:
+        iteration = int(iteration)
+    except ValueError:
+        pass
     print()
-    iteration = 0 if iteration == "n" else int(iteration)
-
+    iteration = iteration if isinstance(iteration, int) else 0
     return iteration
 
 
