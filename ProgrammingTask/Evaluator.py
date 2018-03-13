@@ -2,10 +2,11 @@ from itertools import product
 import numpy as np
 from Constants import DIRECTIONS, DIRECTIONS_D, NOMOVE
 
+
 class Evaluator:
-    '''
+    """
     Evaluates generated policy and improves on it
-    '''
+    """
 
     def __init__(self, grid):
         self._grid = grid
@@ -17,7 +18,8 @@ class Evaluator:
         :param iterations: How many iterations of policy iteration should be done
         :param step_cost: The cost for every step done by the agent
         :param discount: The discount factor gamma
-        :param convergence_epsilon: When in one iteration step the summed absolute change of the iteration fields change less than convergence_epsilon, the iteration is stopped due to convergence
+        :param convergence_epsilon: When in one iteration step the summed absolute change of the iteration
+        fields change less than convergence_epsilon, the iteration is stopped due to convergence
         :return:
         """
         # succ_array_prev encodes the previous step of policy iteration
@@ -29,7 +31,7 @@ class Evaluator:
             succ_array_new = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
 
             for x, y in product(range(0, self._grid.shape_x), range(0, self._grid.shape_y)):
-                policy = self._grid.get_policy_field(x, y) # The direction the policy dictates for that position
+                policy = self._grid.get_policy_field(x, y)  # The direction the policy dictates for that position
                 field = self._grid.get_grid_field(x, y)
 
                 # Goals and penalties have static evaluation values (e.g., 1 or -1) We can skip the iteration step here
@@ -45,7 +47,7 @@ class Evaluator:
                 for dir, movement_prob in movement_probs.items():
                     x_mv, y_mv = np.add([x, y], DIRECTIONS_D[dir])
                     if isOutOfBoundaries(x_mv, y_mv, self._grid.shape):
-                        #Stay at the same field
+                        # Stay at the same field
                         x_mv, y_mv = [x, y]
                     elif not self._grid.get_grid_field(x_mv, y_mv).can_move_here:
                         x_mv, y_mv = [x, y]
@@ -71,7 +73,7 @@ class Evaluator:
         :return:
         """
 
-        #For every possible direction we need to evaluate every single field
+        # For every possible direction we need to evaluate every single field
         eval_directions = {}
         for direction in DIRECTIONS:
             eval_directions[direction] = [[0 for x in range(self._grid.shape_x)] for y in range(self._grid.shape_y)]
@@ -131,7 +133,7 @@ class Evaluator:
 
 
 def isOutOfBoundaries(x, y, shape):
-    '''
+    """
     returns if iteration goes out of bounds
     - since outer walls are not defined and
     restricted by array length limits
@@ -139,6 +141,6 @@ def isOutOfBoundaries(x, y, shape):
     :param y:
     :param shape:
     :return:
-    '''
+    """
     return x < 0 or y < 0 or x >= shape[0] or y >= shape[1]
 

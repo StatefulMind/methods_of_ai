@@ -1,6 +1,5 @@
 import itertools
 import random
-from Constants import DIRECTIONS
 from Constants import DIRECTION_SYMBOLS
 from Constants import UP
 from Constants import RIGHT
@@ -13,20 +12,20 @@ AGENT_SYMBOL = '\u03D2'
 
 
 class Grid:
-    '''
+    """
     Grid class, initializes grid from file, reads input file
     and instantiates fields accordingly.
     Writes grid-values to _grid.
     has get and set methods for field and string representation
-    '''
-
+    """
     def __init__(self, grid_file, policy_grid=None, initial_policy_eval=None):
-        '''
+        """
         Constructor of Grid takes input file and reads it into array
         that is used to instantiate the Fields from GridFields
         bound to _grid
-        :param grid_file: Filepath to a file representing a grid. Expects valid inputs. Fields should be separated by separator, lines should end with '\n'
-        '''
+        :param grid_file: Filepath to a file representing a grid. Expects valid inputs. Fields
+        should be separated by separator, lines should end with '\n'
+        """
         separator = " "
 
         self._array = []
@@ -40,7 +39,6 @@ class Grid:
         self._policy_grid = policy_grid if policy_grid else self.set_random_policy()
         # instantiate evaluation grid if given otherwise initialise with zero array
         self._eval_grid = initial_policy_eval if initial_policy_eval else self.set_policy_evaluation_zero()
-
 
     def __str__(self):
         return self.get_grid_str()
@@ -91,10 +89,10 @@ class Grid:
         return len(self._grid)
 
     def set_random_policy(self):
-        '''
+        """
        Generate random initialisation of directions for fields in policy grid
        :return array: Random policy
-       '''
+       """
         random_directions = [[random.choice([UP, RIGHT, DOWN, LEFT]) for x
                               in range(self.shape_x)]
                              for y in range(self.shape_y)]
@@ -102,18 +100,18 @@ class Grid:
         return self._policy_grid
 
     def set_policy_evaluation_zero(self):
-        '''
+        """
         initializes array of zero as initial evaluation grid
         :return array: Zero evaluation
-        '''
+        """
         self._eval_grid = [[0 for x in range(self.shape_x)] for y in range(self.shape_y)]
         return self._eval_grid
 
     def get_policy_str(self, pos=None):
-        '''
+        """
         Converts policy values into direction symbols
         :return String: representation of the field
-        '''
+        """
 
         if pos:
             print("{} marks the position of the agent".format(AGENT_SYMBOL))
@@ -136,7 +134,7 @@ class Grid:
             field_string += " "
         return field_string
 
-    def print_policy(self, pos = None):
+    def print_policy(self, pos=None):
         """
         Prints the policy in a nice human-readable way
         """

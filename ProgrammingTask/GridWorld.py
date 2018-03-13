@@ -4,14 +4,10 @@ from UI import check_interactive
 from UI import select_discount
 from UI import select_step_cost
 from UI import select_convergence
-from UI import select_learning_rate
 from UI import check_running
 from UI import select_evaluations
 from UI import run_and_print_grid_per_step
-from UI import get_next_evaluation_step
 from UI import get_next_iteration_steps
-from UI import get_next_iteration_step
-from UI import check_next_step
 import sys
 from Grid import Grid
 from Evaluator import Evaluator
@@ -26,7 +22,7 @@ def main():
         grid.print_grid()
         old_policy = grid.get_policy_grid()
 
-        # ask how hight the discount factor should be
+        # ask how high the discount factor should be
         discount = select_discount()
         # ask about the cost each step
         step_cost = select_step_cost()
@@ -46,11 +42,9 @@ def main():
 
         else:
             # in interactive mode, do as many steps as the user wants without convergence
-            evaluation_steps = 2^200
+            evaluation_steps = 2**200
             convergence = 0
             iterations = 0
-
-
 
         print('The initial randomly generated policy:')
         grid.print_policy()
@@ -62,7 +56,6 @@ def main():
             if interactive == 'interactive':
                 iterations = get_next_iteration_steps()
                 if iterations <= 0:
-                   #print_done_and_terminate()
                     print_and_quit(evaluator)
             evaluator.iterate(iterations=iterations, step_cost=step_cost,
                               discount=discount,
@@ -82,7 +75,8 @@ def main():
             old_policy = new_policy
 
         if not converged:
-            print("The policy did not converge with the parameters you chose. You might want to run again with different parameters.")
+            print("The policy did not converge with the parameters you chose."
+                  "You might want to run again with different parameters.")
 
         # interact if program should run again
         running = check_running()
@@ -101,12 +95,6 @@ def print_and_quit(evaluator, _quit=True):
     if _quit:
         print("Thank you for running our program")
         sys.exit(0)
-
-
-def print_done_and_terminate():
-    print('You have not confirmed - exiting now.'
-          'Thank you!')
-    sys.exit(0)
 
 
 if __name__ == '__main__':

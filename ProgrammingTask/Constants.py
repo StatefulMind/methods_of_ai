@@ -22,4 +22,4 @@ DIRECTION_SYMBOLS = {NOMOVE: '\u220E',
                      UP: '\u2191',
                      RIGHT: '\u2192',
                      DOWN: '\u2193',
-                     LEFT: '\u2190',}
+                     LEFT: '\u2190'}

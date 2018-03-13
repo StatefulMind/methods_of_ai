@@ -74,7 +74,7 @@ class Learner:
         sys.exit(0)
 
     def learn(self, episodes=100, convergence=0.00001,
-              interactive='automatic', delay_time = 0):
+              interactive='automatic', delay_time=0):
         """ applies q-learning with the q_table from the class as DataFrame over
         the given episodes while updating the q_table or terminating when
         convergence value is reached
@@ -172,7 +172,7 @@ class Learner:
                     converged = True
                     break
 
-                #Update the q_table
+                # Update the q_table
                 self._q_table = q_table_next
                 sleep(delay_time)
 

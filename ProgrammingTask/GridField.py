@@ -1,6 +1,7 @@
 from abc import ABC
 from Constants import NOMOVE, UP, DOWN, LEFT, RIGHT
 
+
 class GridField(ABC):
     """Abstract Field Class for Fields in the Grid
     defines type property
@@ -27,11 +28,11 @@ class GridField(ABC):
 
 
 class GridFieldField(GridField):
-    '''
+    """
     Class containing the properties of the field field in the grid
     Adds movement probabilities and movement boolean
     Inherits type and __str__ function
-    '''
+    """
     FIELD = "F"
 
     # Represents the probabilities in which directions you might move if you perform an action
@@ -62,10 +63,10 @@ class GridFieldField(GridField):
 
 
 class GridFieldWall(GridField):
-    '''
+    """
     Class containing properties and probabilities of the wall field
     overwrites __str__ with Wall symbol
-    '''
+    """
     WALL = 'O'
     WALL_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
 
@@ -106,11 +107,11 @@ class GridFieldWall(GridField):
 
 
 class GridFieldPenalty(GridField):
-    '''
+    """
     Class containing properties for the Penalty Field
     contains movement probabilities for the penalty field
     overwrites __str__ with penalty symbol
-    '''
+    """
 
     PENALTY = "P"
     PENALTY_PROB_ANY = {NOMOVE: 1, UP: 0, RIGHT: 0, DOWN: 0, LEFT: 0}
@@ -151,11 +152,11 @@ class GridFieldPenalty(GridField):
 
 
 class GridFieldGoal(GridField):
-    '''
+    """
     Class containing properties for the Goal Field
     contains movement probabilities for the goal field
     overwrites __str__ with goal symbol
-    '''
+    """
 
     GOAL = "E"
     # if in a goal state you do not move
