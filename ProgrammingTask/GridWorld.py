@@ -71,7 +71,7 @@ def main():
                     converged = True
                     break
                 else:
-                    print("You might want to try more iteration steps\n")
+                    print("If this does not seem to be the final policy, you might want to try more iteration steps\n")
             old_policy = new_policy
 
         if not converged:

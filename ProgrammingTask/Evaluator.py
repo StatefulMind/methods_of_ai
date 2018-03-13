@@ -126,7 +126,9 @@ class Evaluator:
             if not line_old == y:
                 field_string += "\n"
                 line_old = y
-            field_string += str(float(
+            #field_string += str(float(
+            #    np.round(self._grid.get_eval_field(x, y), 3)))
+            field_string += "{0:+.3f}".format(float(
                 np.round(self._grid.get_eval_field(x, y), 3)))
             field_string += " "
         print(field_string)

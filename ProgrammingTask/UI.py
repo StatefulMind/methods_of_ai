@@ -110,7 +110,7 @@ def select_grids(grid_file=GRID_DIR):
         for i, _file in enumerate(all_files):
             print('[{number}]   -   {name}'.format(number=i, name=_file))
         index = None
-        while not index:
+        while index is None:
             try:
                 index = int(input('Select .grid file by number... '))
                 print()
