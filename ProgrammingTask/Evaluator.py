@@ -66,8 +66,8 @@ class Evaluator:
     def evaluate(self):
         """
         Performs policy evaluation.
-        Assumes, that previously policy iteration has been calles and that a meaningful solution is in the eval_grid
-        Writes the optimized policy into policy in _grid
+        Assumes, that previously policy iteration has been called and that a meaningful solution is in the eval_grid
+        Writes the optimized policy into policy into _grid
         :return:
         """
 
@@ -101,7 +101,6 @@ class Evaluator:
             dir = {direction: eval_directions[direction][y][x] for direction in DIRECTIONS if not direction == NOMOVE}
             new_policy[y][x] = max(dir, key=dir.get)
 
-
         self._grid.set_policy_grid(new_policy)
 
     def convergence_check(self, old_iteration_step, new_iteration_step, convergence_epsilon):
@@ -126,7 +125,7 @@ class Evaluator:
                 field_string += "\n"
                 line_old = y
             field_string += str(float(
-                np.round(self._grid.get_eval_field(x, y), 2)))
+                np.round(self._grid.get_eval_field(x, y), 3)))
             field_string += " "
         print(field_string)
 

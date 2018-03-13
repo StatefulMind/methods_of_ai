@@ -45,7 +45,7 @@ def check_running():
     :returns running boolean:
     """
     while True:
-        user_in = input('Do you want to continue with a new run? [y/n] ')
+        user_in = input('\n\nDo you want to continue with a new run? [y/n] ')
         if user_in == 'y' or user_in == 'Y' or user_in == 'Yes' or user_in == 'YES':
             running = True
             break
@@ -65,8 +65,9 @@ def check_interactive(interactive=None):
     :return 'interactive' or  'automatic':
     """
     while not interactive:
-        user_in = str(input("Do you want to run in interactive mode (i) or automatic (any key)? "))
+        user_in = str(input("Do you want to run in interactive mode [i] or automatic (any key)? "))
         interactive = 'interactive' if user_in == 'i' else 'automatic'
+        print()
     return interactive
 
 
@@ -108,14 +109,18 @@ def select_grids(grid_file=GRID_DIR):
         all_files = os.listdir(grid_file)
         for i, _file in enumerate(all_files):
             print('[{number}]   -   {name}'.format(number=i, name=_file))
-        try:
-            index = int(input('Select .grid file by number... '))
-            # if integer can be casted without error and should be in limits
-            if not 0 <= index < len(all_files):
-                raise ValueError
-        except ValueError as e:
-            print('Not an integer in the correct range...')
-            print(e)
+        index = None
+        while not index:
+            try:
+                index = int(input('Select .grid file by number... '))
+                print()
+                # if integer can be casted without error and should be in limits
+                if not 0 <= index < len(all_files):
+                    raise ValueError
+            except ValueError as e:
+                print('Not an integer in the correct range...')
+                print(e)
+                index = None
         grid_file = os.path.join(GRID_DIR, all_files[index])
     if grid_file[-4:] == 'grid':
         grid_path = grid_file
@@ -169,7 +174,7 @@ def select_episodes(episodes=None):
 
 
 def select_iterations(iterations=None):
-    return int(check_input_and_return("number of iterations", iterations))
+    return int(check_input_and_return("number of iterations to be done before every evaluation", iterations))
 
 
 def select_convergence(convergence=None):
@@ -183,7 +188,7 @@ def select_convergence(convergence=None):
         convergence = float(input("Enter a convergence value... \n"
                                   "-----------------------------\n"
                                   "HELP: \n"
-                                  "The absolute difference of the values from "
+                                  "The absolute difference of the evaluation values from "
                                   "current vs. next assignment \n"
                                   "leading to termination if "
                                   "this value is satisfied\n"
@@ -212,17 +217,18 @@ def select_discount(discount=None):
 
 
 def select_step_cost(step_cost=None):
-    return float(check_input_and_return("step cost", step_cost))
+    return float(check_input_and_return("step cost", step_cost, can_be_negative=True))
 
 
 def select_evaluations(evaluations=None):
     return int(check_input_and_return("evaluations", evaluations))
 
 
-def check_input_and_return(value_name, check_value):
+def check_input_and_return(value_name, check_value, can_be_negative=False):
     while not check_value:
         check_value = input(("Enter {}... ".format(value_name)))
-        if float(check_value) >= 0.0:
+        if can_be_negative or float(check_value) >= 0.0:
+            print()
             break
         else:
             print("This value cannot be negative!")
@@ -242,7 +248,15 @@ def get_next_iteration_step():
     return iteration
 
 
+def get_next_iteration_steps():
+    iteration = input("How many steps do you want to iterate and evaluate afterwards? Type [n] or [0] to stop")
+    print()
+    iteration = 0 if iteration == "n" else int(iteration)
+
+    return iteration
+
+
 def get_next_evaluation_step():
-    evaluation = bool(input("Do you want to evaluate? [y/n] "))
+    evaluation = bool(input("Do you want to evaluate and improve the policy? [y/n] "))
     evaluation = True if evaluation == 'y' else False
     return evaluation
